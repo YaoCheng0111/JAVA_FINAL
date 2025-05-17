@@ -1,63 +1,57 @@
 package myPackage;
 
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 
 public class Habit {
-    String name;
-    List<HabitSchedule> schedules = new ArrayList<>();
-    Set<String> checkins = new HashSet<>();
+    public String name;
+    public List<HabitSchedule> schedules = new ArrayList<>();
+    private Set<String> checkedDates = new HashSet<>();
 
     public Habit(String name) {
         this.name = name;
     }
 
-    public void addSchedule(int day, int sh, int sm, int eh, int em) {
-        schedules.add(new HabitSchedule(day, sh, sm, eh, em));
-    }
-
-    public String getScheduleText() {
-        if (schedules.isEmpty())
-            return "無排程";
-        StringBuilder sb = new StringBuilder();
-        for (HabitSchedule s : schedules) {
-            sb.append(s.toReadableString()).append(" ");
-        }
-        return sb.toString();
+    public void addSchedule(int dayOfWeek, int startHour, int startMinute, int endHour, int endMinute) {
+        schedules.add(new HabitSchedule(dayOfWeek, startHour, startMinute, endHour, endMinute));
     }
 
     public boolean shouldRemindNow() {
-        LocalDateTime now = LocalDateTime.now();
-        int today = now.getDayOfWeek().getValue();
-        LocalTime current = now.toLocalTime().withSecond(0).withNano(0);
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now().withSecond(0).withNano(0);
+        int day = today.getDayOfWeek().getValue(); // 1=Monday, 7=Sunday
+
         for (HabitSchedule s : schedules) {
-            if (s.dayOfWeek == today && current.equals(s.getStartTime())) {
-                return true;
+            if (s.dayOfWeek == day && s.startHour == now.getHour() && s.startMinute == now.getMinute()) {
+                return !isChecked(today.toString());
             }
         }
         return false;
     }
 
-    public void checkInToday() {
+    public void checkToday() {
         String today = LocalDate.now().toString();
-        checkins.add(today);
+        checkedDates.add(today);
     }
 
-    public boolean isCheckedInToday() {
-        return checkins.contains(LocalDate.now().toString());
+    public boolean isChecked(String date) {
+        return checkedDates.contains(date);
     }
 
-    public String getCheckinStatusText() {
-        return isCheckedInToday() ? "已完成" : "未完成";
-    }
-
-    public String getCheckinsDataString() {
-        return String.join(";", checkins);
-    }
-
-    public void loadCheckinsFromString(String data) {
-        if (data != null && !data.isEmpty()) {
-            checkins.addAll(Arrays.asList(data.split(";")));
+    public String getScheduleText() {
+        StringBuilder sb = new StringBuilder();
+        for (HabitSchedule s : schedules) {
+            sb.append(s).append(" ");
         }
+        return sb.toString();
+    }
+
+    public String toDataString() {
+        StringBuilder sb = new StringBuilder(name);
+        for (HabitSchedule s : schedules) {
+            sb.append(",").append(s.toDataString());
+        }
+        return sb.toString();
     }
 }
