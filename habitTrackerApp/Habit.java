@@ -1,4 +1,4 @@
-package habitTrackerApp.myPackage;
+package myPackage;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

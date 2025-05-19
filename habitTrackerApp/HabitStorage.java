@@ -1,4 +1,4 @@
-package habitTrackerApp.myPackage;
+package myPackage;
 
 import java.io.*;
 import java.util.*;

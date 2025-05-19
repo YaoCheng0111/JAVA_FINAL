@@ -1,4 +1,4 @@
-package habitTrackerApp.myPackage;
+package myPackage;
 
 import javax.swing.*;
 import java.awt.*;

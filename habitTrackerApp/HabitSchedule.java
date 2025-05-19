@@ -1,4 +1,4 @@
-package habitTrackerApp.myPackage;
+package myPackage;
 
 public class HabitSchedule {
     public int dayOfWeek;
