@@ -16,6 +16,9 @@ public class CountdownTimerApp extends JFrame {
     private Timer timer;
     private TimerTask task;
     private int timeInSeconds;
+    private int showInSeconds;
+    private int showInMinute;
+    private int showInHour;
     private boolean isRunning = false;
 
     public CountdownTimerApp() {
@@ -64,7 +67,11 @@ public class CountdownTimerApp extends JFrame {
                     public void run() {
                         SwingUtilities.invokeLater(() -> {
                             if (timeInSeconds >= 0) {
-                                timeLabel.setText("remain time: " + timeInSeconds + " second");
+                                showInSeconds = timeInSeconds%60;
+                                showInMinute = (timeInSeconds/60)%60;
+                                showInHour = timeInSeconds/3600;
+
+                                timeLabel.setText("remain time: " + showInHour + " hour "+ showInMinute + " minute "+ showInSeconds + " second");
                                 timeInSeconds--;
                             } else {
                                 timeLabel.setText("Time's up!");
