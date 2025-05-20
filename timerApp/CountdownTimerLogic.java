@@ -60,6 +60,7 @@ public class CountdownTimerLogic {
     }
 
     private void stop() {
+        isRunning = false;
         if (timer != null) timer.cancel();
         if (task != null) task.cancel();
     }

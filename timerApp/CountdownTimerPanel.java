@@ -59,7 +59,6 @@ public class CountdownTimerPanel extends JPanel {
         resetButton.addActionListener(e -> {
             logic.reset();
             resetUI();
-            updateButtons();
         });
 
         updateButtons();
@@ -89,6 +88,7 @@ public class CountdownTimerPanel extends JPanel {
         hourBox.setSelectedIndex(0);
         minuteBox.setSelectedIndex(0);
         secondBox.setSelectedIndex(0);
+        updateButtons();
     }
 
     private void updateButtons() {
