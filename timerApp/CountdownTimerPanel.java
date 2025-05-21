@@ -6,7 +6,7 @@ import java.awt.*;
 public class CountdownTimerPanel extends JPanel {
     private JLabel timeLabel;
     private JComboBox<Integer> hourBox, minuteBox, secondBox;
-    private JButton startButton, pauseButton, resetButton;
+    private JButton startButton, pauseButton, resetButton,commonTimesButton;
     private CountdownTimerLogic logic;
 
     public CountdownTimerPanel() {
@@ -27,8 +27,9 @@ public class CountdownTimerPanel extends JPanel {
         startButton = new JButton("Start");
         pauseButton = new JButton("Pause");
         resetButton = new JButton("Reset");
-
-        add(startButton); add(pauseButton); add(resetButton);
+        commonTimesButton = new JButton("常用時間");
+        
+        add(startButton); add(pauseButton); add(resetButton);add(commonTimesButton);
 
         logic = new CountdownTimerLogic(new CountdownTimerLogic.CountdownCallback() {
             public void onTick(int remainingSeconds) {
@@ -60,7 +61,15 @@ public class CountdownTimerPanel extends JPanel {
             logic.reset();
             resetUI();
         });
+        commonTimesButton.addActionListener(e -> new CommonTimesDialog(this));
 
+        updateButtons();
+    }
+
+    public void startWithPreset(int seconds) {
+        logic.reset();
+        logic.start(seconds);
+        
         updateButtons();
     }
 
@@ -95,5 +104,9 @@ public class CountdownTimerPanel extends JPanel {
         startButton.setEnabled(!logic.isRunning());
         pauseButton.setEnabled(logic.isRunning());
         resetButton.setEnabled(logic.getTotalSeconds() > 0);
-    }
+
+        hourBox.setEnabled(!logic.isStarted());
+        minuteBox.setEnabled(!logic.isStarted());
+        secondBox.setEnabled(!logic.isStarted());
+    } 
 }

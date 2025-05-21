@@ -9,6 +9,7 @@ public class CountdownTimerLogic {
     private int totalSeconds;
     private boolean isRunning = false;
     private boolean isPaused = false;
+    private boolean isStarted = false;
     private CountdownCallback callback;
 
     public CountdownTimerLogic(CountdownCallback callback) {
@@ -24,6 +25,7 @@ public class CountdownTimerLogic {
 
         isRunning = true;
         isPaused = false;
+        isStarted = true;
 
         timer = new Timer();
         task = new TimerTask() {
@@ -35,6 +37,7 @@ public class CountdownTimerLogic {
                 } else {
                     stop();
                     callback.onFinish();
+                    isStarted = false;
                 }
             }
         };
@@ -55,6 +58,7 @@ public class CountdownTimerLogic {
         stop();
         totalSeconds = 0;
         isPaused = false;
+        isStarted = false;
     }
 
     private void stop() {
@@ -69,6 +73,10 @@ public class CountdownTimerLogic {
 
     public boolean isPaused(){
         return isPaused;
+    }
+
+    public boolean isStarted(){
+        return isStarted;
     }
 
     public interface CountdownCallback {
