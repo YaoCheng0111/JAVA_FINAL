@@ -49,14 +49,12 @@ public class CountdownTimerLogic {
         if(!isRunning) return;
         stop();
         isPaused = true;
-        isRunning = false;
     }
 
     public void reset() {
         stop();
         totalSeconds = 0;
         isPaused = false;
-        isRunning = false;
     }
 
     private void stop() {
