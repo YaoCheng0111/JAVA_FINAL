@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.*;
 
+import myPackage.equipItemManager;
+
 class ItemPanel extends JPanel {
 
     private UserData userData;
@@ -17,16 +19,23 @@ class ItemPanel extends JPanel {
         this.userData = new UserData(100);
         this.storeItems = new ArrayList<>();
 
-        storeItems.add(new StoreItem("huh", 50, "img_source/huh_cat.jpg"));
-        storeItems.add(new StoreItem("cute", 50, "img_source/Cute_cat.jpg"));
-        storeItems.add(new StoreItem("pop", 50, "img_source/pop_cat.png"));
-        storeItems.add(new StoreItem("okay", 50, "img_source/okay_cat.jpg"));
-        storeItems.add(new StoreItem("serious", 50, "img_source/serious_cat.jpg"));
-        storeItems.add(new StoreItem("oiia", 50, "img_source/oiia_cat.jpg"));
+        storeItems.add(new StoreItem("huh", 50, "source/huh_cat.jpg"));
+        storeItems.add(new StoreItem("cute", 50, "source/Cute_cat.jpg"));
+        storeItems.add(new StoreItem("pop", 50, "source/pop_cat.png"));
+        storeItems.add(new StoreItem("okay", 50, "source/okay_cat.jpg"));
+        storeItems.add(new StoreItem("serious", 50, "source/serious_cat.jpg"));
+        //storeItems.add(new StoreItem("oiia", 50, "source/uiiaCat.png"));
+
+        StoreItem uiia=new StoreItem("oiia",0,"source/oiia_cat.jpg");
+        storeItems.add(uiia);
+        userData.purchaseItem(uiia);
+
+        equippedItem=uiia;
 
         setLayout(new GridLayout(2, 3, 10, 10)); // row=2, col=3 排列
-
+        
         for (StoreItem item : storeItems) {
+            
             JPanel itemPanel = new JPanel();
             itemPanel.setLayout(new BorderLayout());
 
@@ -52,7 +61,7 @@ class ItemPanel extends JPanel {
 
             // 購買按鈕狀態檢查
             buyButton.setEnabled(userData.getTokens() >= item.getPrice());
-
+            
             // 購買邏輯
             buyButton.addActionListener(new ActionListener() {
                 @Override
@@ -75,10 +84,27 @@ class ItemPanel extends JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     equippedItem = item;
+                    equipItemManager.setEquippedItem(item);
                     JOptionPane.showMessageDialog(null, "已裝備：" + item.getName());
                     updateEquipButtons();
                 }
             });
+
+
+            if (userData.hasItem(item.getName())) {     //default是裝備uiiaCat，避免每次新增按鈕的時候uiiaCat介面被刷新
+                buyButton.setText("已購買");
+                buyButton.setEnabled(false);
+                equipButton.setVisible(true);
+
+                if (item == equippedItem) {
+                    equipButton.setText("已裝備");
+                    equipButton.setEnabled(false);
+                } else {
+                    equipButton.setText("裝備");
+                    equipButton.setEnabled(true);
+                }
+            }
+
 
             itemPanel.add(itemImage, BorderLayout.NORTH);
             itemPanel.add(itemLabel, BorderLayout.CENTER);

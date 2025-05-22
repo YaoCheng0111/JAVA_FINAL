@@ -4,7 +4,7 @@ import java.util.HashSet;
 
 class UserData {
 
-    private int tokens;
+    private int tokens;     //後端紀錄的tokens數
     private HashSet<String> ownedItems;
 
     public UserData(int initialTokens) {
