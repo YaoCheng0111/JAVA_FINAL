@@ -11,7 +11,7 @@ public class mainFrame extends JFrame {
     public mainFrame() {
         setTitle("商店介面");
         setSize(800, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
         tokenPanel = new TokenPanel();
