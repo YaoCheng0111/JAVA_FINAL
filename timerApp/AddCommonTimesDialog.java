@@ -24,9 +24,9 @@ public class AddCommonTimesDialog extends Dialog{
         JComboBox<Integer> minuteBox = createComboBox(60);
         JComboBox<Integer> secondBox = createComboBox(60);
 
-        inputPanel.add(new JLabel("Hour:")); inputPanel.add(hourBox);
-        inputPanel.add(new JLabel("Minute:")); inputPanel.add(minuteBox);
-        inputPanel.add(new JLabel("Second:")); inputPanel.add(secondBox);
+        inputPanel.add(new JLabel("時:")); inputPanel.add(hourBox);
+        inputPanel.add(new JLabel("分:")); inputPanel.add(minuteBox);
+        inputPanel.add(new JLabel("秒:")); inputPanel.add(secondBox);
 
         add(inputPanel,BorderLayout.CENTER);
 

@@ -2,11 +2,19 @@ package myPackage;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.time.format.TextStyle;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 public class AddAlarmTimeDialog extends JDialog{
     
     private Alarm result;
+    private Map<DayOfWeek,JCheckBox> dayCheckBoxes = new EnumMap<>(DayOfWeek.class);
 
     public static Alarm showAddDialog(Component parent) {
         Window window = SwingUtilities.getWindowAncestor(parent);
@@ -17,7 +25,7 @@ public class AddAlarmTimeDialog extends JDialog{
     
     public AddAlarmTimeDialog(Window parent){
         super(parent , "新增鬧鐘", ModalityType.APPLICATION_MODAL);
-        setSize(300,150);
+        setSize(450,150);
         setLocationRelativeTo(parent);
 
         JPanel inputPanel = new JPanel(new FlowLayout());
@@ -31,6 +39,15 @@ public class AddAlarmTimeDialog extends JDialog{
         inputPanel.add(new JLabel("訊息:")); inputPanel.add(messageField);
 
         add(inputPanel,BorderLayout.CENTER);
+        
+        JPanel repeatPanel = new JPanel();
+        repeatPanel.add(new JLabel("重複:"));
+        for (DayOfWeek day : DayOfWeek.values()) {
+            JCheckBox checkBox = new JCheckBox(day.getDisplayName(TextStyle.SHORT, Locale.getDefault()));
+            dayCheckBoxes.put(day, checkBox);
+            repeatPanel.add(checkBox);
+        }
+        add(repeatPanel, BorderLayout.NORTH);
 
         JButton confirmButton = new JButton("確認");
         JButton cancelButton = new JButton("取消");
@@ -39,7 +56,15 @@ public class AddAlarmTimeDialog extends JDialog{
             int h = (int)hourBox.getSelectedItem();
             int m = (int)minuteBox.getSelectedItem();
             String msg = messageField.getText().isEmpty() ? "時間到了!" : messageField.getText(); 
-            result = new Alarm(LocalTime.of(h,m),msg);
+            
+            Set<DayOfWeek> selectedDays = new HashSet<>();
+            for (Map.Entry<DayOfWeek, JCheckBox> entry : dayCheckBoxes.entrySet()) {
+                if (entry.getValue().isSelected()) {
+                    selectedDays.add(entry.getKey());
+                }
+            }  
+
+            result = new Alarm(LocalTime.of(h,m),msg,selectedDays);
             dispose();
         });
 
