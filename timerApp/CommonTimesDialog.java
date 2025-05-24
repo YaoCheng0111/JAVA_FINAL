@@ -14,7 +14,7 @@ public class CommonTimesDialog extends JDialog{
     private String newTime;
     
     public CommonTimesDialog(CountdownTimerPanel parentPanel) {
-        super((JFrame) SwingUtilities.getWindowAncestor(parentPanel), "常用時間", true);
+        super(SwingUtilities.getWindowAncestor(parentPanel), "常用時間", ModalityType.APPLICATION_MODAL);
         setLayout(new BorderLayout());
         setSize(300, 400);
         setLocationRelativeTo(parentPanel);

@@ -2,19 +2,21 @@ package myPackage;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalTime;
 
+public class AddAlarmTimeDialog extends JDialog{
+    
+    private Alarm result;
 
-public class AddCommonTimesDialog extends Dialog{
-    private static String result = null;
-
-    public static String showDialog(Window parent) {
-        AddCommonTimesDialog dialog = new AddCommonTimesDialog(parent);
+    public static Alarm showAddDialog(Component parent) {
+        Window window = SwingUtilities.getWindowAncestor(parent);
+        AddAlarmTimeDialog dialog = new AddAlarmTimeDialog(window);
         dialog.setVisible(true);
-        return result;
+        return dialog.result;
     }
     
-    public AddCommonTimesDialog(Window parent){
-        super(parent , "新增常用時間", ModalityType.APPLICATION_MODAL);
+    public AddAlarmTimeDialog(Window parent){
+        super(parent , "新增鬧鐘", ModalityType.APPLICATION_MODAL);
         setSize(300,150);
         setLocationRelativeTo(parent);
 
@@ -22,11 +24,11 @@ public class AddCommonTimesDialog extends Dialog{
 
         JComboBox<Integer> hourBox = createComboBox(24);
         JComboBox<Integer> minuteBox = createComboBox(60);
-        JComboBox<Integer> secondBox = createComboBox(60);
+        JTextField messageField = new JTextField(15);
 
-        inputPanel.add(new JLabel("Hour:")); inputPanel.add(hourBox);
-        inputPanel.add(new JLabel("Minute:")); inputPanel.add(minuteBox);
-        inputPanel.add(new JLabel("Second:")); inputPanel.add(secondBox);
+        inputPanel.add(new JLabel("時:")); inputPanel.add(hourBox);
+        inputPanel.add(new JLabel("分:")); inputPanel.add(minuteBox);
+        inputPanel.add(new JLabel("訊息:")); inputPanel.add(messageField);
 
         add(inputPanel,BorderLayout.CENTER);
 
@@ -36,8 +38,8 @@ public class AddCommonTimesDialog extends Dialog{
         confirmButton.addActionListener(e -> {
             int h = (int)hourBox.getSelectedItem();
             int m = (int)minuteBox.getSelectedItem();
-            int s = (int)secondBox.getSelectedItem();
-            result = String.format("%02d:%02d:%02d",h,m,s);
+            String msg = messageField.getText().isEmpty() ? "時間到了!" : messageField.getText(); 
+            result = new Alarm(LocalTime.of(h,m),msg);
             dispose();
         });
 
