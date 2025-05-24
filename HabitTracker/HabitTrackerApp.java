@@ -2,63 +2,35 @@ package myPackage;
 
 import javax.swing.*;
 import java.awt.*;
-import java.time.LocalDate;
-import java.util.*;
 
 public class HabitTrackerApp {
-    private static Map<String, Habit> habits;
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            habits = HabitData.load();
+            HabitManager manager = new HabitManager();
             JFrame frame = new JFrame("習慣追蹤器");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(500, 400);
-            frame.setLayout(new BorderLayout());
+            frame.setSize(800, 600);
 
-            DefaultListModel<String> listModel = new DefaultListModel<>();
-            JList<String> habitList = new JList<>(listModel);
-            JScrollPane scrollPane = new JScrollPane(habitList);
-            frame.add(scrollPane, BorderLayout.CENTER);
+            JTabbedPane tabs = new JTabbedPane();
+
+            tabs.add("習慣清單", new HabitListPanel(manager));
+            tabs.add("表格排程", new ScheduleTablePanel(manager));
 
             JButton addBtn = new JButton("新增習慣");
-            JButton checkBtn = new JButton("打卡");
-            JPanel btnPanel = new JPanel();
-            btnPanel.add(addBtn);
-            btnPanel.add(checkBtn);
-            frame.add(btnPanel, BorderLayout.SOUTH);
-
-            Runnable refreshList = () -> {
-                listModel.clear();
-                for (Habit h : habits.values()) {
-                    String today = LocalDate.now().toString();
-                    String status = h.checkinDates.contains(today) ? "✅" : "❌";
-                    listModel.addElement(h.name + " " + status + " " + h.getScheduleText());
-                }
-            };
-
             addBtn.addActionListener(e -> {
-                new AddHabitDialog(frame, habit -> {
-                    habits.put(habit.name, habit);
-                    HabitData.save(habits);
-                    refreshList.run();
-                }).setVisible(true);
+                new AddHabitDialog(frame, manager);
+                frame.getContentPane().removeAll();
+                tabs.setComponentAt(0, new HabitListPanel(manager));
+                tabs.setComponentAt(1, new ScheduleTablePanel(manager));
+                frame.getContentPane().add(tabs, BorderLayout.CENTER);
+                frame.revalidate();
+                frame.repaint();
             });
 
-            checkBtn.addActionListener(e -> {
-                String selected = habitList.getSelectedValue();
-                if (selected == null)
-                    return;
-                String name = selected.split(" ")[0];
-                Habit h = habits.get(name);
-                String today = LocalDate.now().toString();
-                if (!h.checkinDates.contains(today))
-                    h.checkinDates.add(today);
-                HabitData.save(habits);
-                refreshList.run();
-            });
+            frame.setLayout(new BorderLayout());
+            frame.add(tabs, BorderLayout.CENTER);
+            frame.add(addBtn, BorderLayout.SOUTH);
 
-            refreshList.run();
             frame.setVisible(true);
         });
     }

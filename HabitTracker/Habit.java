@@ -1,43 +1,50 @@
 package myPackage;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Habit {
-    String name;
-    List<HabitSchedule> schedules = new ArrayList<>();
-    List<String> checkinDates = new ArrayList<>();
+    public String name;
+    public List<HabitSchedule> schedules = new ArrayList<>();
+    public Set<String> checkIns = new HashSet<>();
 
     public Habit(String name) {
         this.name = name;
     }
 
-    public void addSchedule(int dayOfWeek, int startHour, int startMinute, int endHour, int endMinute) {
-        schedules.add(new HabitSchedule(dayOfWeek, startHour, startMinute, endHour, endMinute));
-    }
-
-    public boolean shouldRemindNow() {
-        return schedules.stream().anyMatch(HabitSchedule::isNow);
+    public void addSchedule(int day, int startHour, int startMinute, int endHour, int endMinute) {
+        schedules.add(new HabitSchedule(day, startHour, startMinute, endHour, endMinute));
     }
 
     public String getScheduleText() {
         if (schedules.isEmpty())
-            return "（無排程）";
+            return "無排程";
         StringBuilder sb = new StringBuilder();
         for (HabitSchedule s : schedules) {
-            sb.append(s.toString()).append(" ");
+            sb.append(s.toDisplayString()).append(" ");
         }
         return sb.toString().trim();
     }
 
-    public String toDataString() {
-        StringBuilder sb = new StringBuilder(name);
+    public boolean shouldRemindNow() {
+        Calendar now = Calendar.getInstance();
+        int today = now.get(Calendar.DAY_OF_WEEK);
+        int hour = now.get(Calendar.HOUR_OF_DAY);
+        int minute = now.get(Calendar.MINUTE);
         for (HabitSchedule s : schedules) {
-            sb.append(",").append(s.toDataString());
+            if (s.day == today && s.startHour == hour && s.startMinute == minute) {
+                return true;
+            }
         }
-        for (String date : checkinDates) {
-            sb.append(",check:").append(date);
-        }
-        return sb.toString();
+        return false;
+    }
+
+    public boolean isCheckedInToday() {
+        String today = java.time.LocalDate.now().toString();
+        return checkIns.contains(today);
+    }
+
+    public void checkInToday() {
+        String today = java.time.LocalDate.now().toString();
+        checkIns.add(today);
     }
 }
