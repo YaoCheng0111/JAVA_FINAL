@@ -7,6 +7,10 @@ import javax.swing.*;
 public class LobbyGUI {
 
     private JLabel imageLabel;
+    private JPanel southPanel; 
+    private JButton downButton;
+    private JButton alarmButton;
+    private JButton timerButton;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new LobbyGUI().createUI());
@@ -26,9 +30,11 @@ public class LobbyGUI {
 
         // 建立按鈕（預設隱藏）
         JButton upButton = new JButton("Button1");
-        JButton downButton = new JButton("Button2");
+        downButton = new JButton("時間");
         JButton leftButton = new JButton("Button3");
         JButton rightButton = new JButton("Button4");
+        JButton alarmButton = new JButton("鬧鐘");
+        JButton timerButton = new JButton("倒數計時");
 
         upButton.setVisible(false);
         downButton.setVisible(false);
@@ -39,9 +45,52 @@ public class LobbyGUI {
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.add(imageLabel, BorderLayout.CENTER);
         centerPanel.add(upButton, BorderLayout.NORTH);
-        centerPanel.add(downButton, BorderLayout.SOUTH);
         centerPanel.add(leftButton, BorderLayout.WEST);
         centerPanel.add(rightButton, BorderLayout.EAST);
+
+        // 時間功能panel
+        southPanel = new JPanel(new FlowLayout());
+        southPanel.add(downButton);
+        centerPanel.add(southPanel, BorderLayout.SOUTH);
+
+        // hover 時切換顯示
+        downButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                Timer delayTimer = new Timer(100, evt -> {
+                    southPanel.removeAll();
+                    southPanel.add(alarmButton);
+                    southPanel.add(timerButton);
+                    alarmButton.setVisible(true);
+                    timerButton.setVisible(true);
+                    southPanel.revalidate();
+                    southPanel.repaint();
+                });
+                delayTimer.setRepeats(false);
+                delayTimer.start();
+            }
+        });
+
+        // 若想讓滑出後恢復原本的按鈕
+        MouseAdapter restoreListener = new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                Component c = e.getComponent();
+                PointerInfo pi = MouseInfo.getPointerInfo();
+                Point location = pi.getLocation();
+                SwingUtilities.convertPointFromScreen(location, c.getParent());
+
+                if (!c.getBounds().contains(location)) {
+                    resetToTimeButton();
+                }
+            }
+        };
+        alarmButton.addMouseListener(restoreListener);
+        timerButton.addMouseListener(restoreListener);
+
+        // 各按鈕的功能：
+        alarmButton.addActionListener(e -> new AlarmDialog(frame).setVisible(true));
+        timerButton.addActionListener(e -> {new CountdownTimeDialog(frame).setVisible(true);});
 
         // 點擊圖片時顯示/隱藏按鈕
         imageLabel.addMouseListener(new MouseAdapter() {
@@ -81,6 +130,16 @@ public class LobbyGUI {
 
         frame.add(centerPanel, BorderLayout.CENTER);
         frame.setVisible(true);
+    }
+
+    // 恢復「時間」按鈕
+    private void resetToTimeButton() {
+        SwingUtilities.invokeLater(() -> {
+            southPanel.removeAll();
+            southPanel.add(downButton);
+            southPanel.revalidate();
+            southPanel.repaint();
+        });
     }
 
     // ✅ 圖片等比例縮放

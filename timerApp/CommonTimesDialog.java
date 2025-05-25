@@ -7,13 +7,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.swing.*;
+
 import java.awt.*;
 
 public class CommonTimesDialog extends JDialog{
     private String newTime;
     
     public CommonTimesDialog(CountdownTimerPanel parentPanel) {
-        super((JFrame) SwingUtilities.getWindowAncestor(parentPanel), "常用時間", true);
+        super(SwingUtilities.getWindowAncestor(parentPanel), "常用時間", ModalityType.APPLICATION_MODAL);
         setLayout(new BorderLayout());
         setSize(300, 400);
         setLocationRelativeTo(parentPanel);
@@ -42,17 +43,21 @@ public class CommonTimesDialog extends JDialog{
 
         addButton.addActionListener(e -> {
             String time = AddCommonTimesDialog.showDialog(this);
-            if (time != null && isValidTimeFormat(time)) {
+            if (time != null) {
                 model.addElement(time);
                 saveCommonTimes(model);
             }
         });
 
         editButton.addActionListener(e -> {
-            String selected = timeList.getSelectedValue();
+            String selected = timeList.getSelectedValue(); 
             if (selected != null) {
-                String edited = JOptionPane.showInputDialog(this, "修改時間 (HH:MM:SS)", selected);
-                if (edited != null && isValidTimeFormat(edited)) {
+                String[] splitSelected = selected.split(":");
+                int editHour = Integer.parseInt(splitSelected[0]);
+                int editMinute = Integer.parseInt(splitSelected[1]);
+                int editSecond = Integer.parseInt(splitSelected[2]);
+                String edited = EditCommonTimesDialog.showDialog(this,editHour,editMinute,editSecond);
+                if (edited != null) {
                     int idx = timeList.getSelectedIndex();
                     model.set(idx, edited);
                     saveCommonTimes(model);
@@ -106,10 +111,6 @@ public class CommonTimesDialog extends JDialog{
         int m = Integer.parseInt(parts[1]);
         int s = Integer.parseInt(parts[2]);
         return h * 3600 + m * 60 + s;
-    }
-
-    private boolean isValidTimeFormat(String time) {
-        return time.matches("\\d{1,2}:\\d{1,2}:\\d{1,2}");
     }
 
     private void setNewTime(int newHour,int newMinute,int newSecond){

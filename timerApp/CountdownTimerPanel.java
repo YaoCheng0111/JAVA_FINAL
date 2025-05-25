@@ -12,23 +12,31 @@ public class CountdownTimerPanel extends JPanel {
     public CountdownTimerPanel() {
         setLayout(new FlowLayout());
 
-        timeLabel = new JLabel("remain time: 00 hour 00 minute 00 second");
-        timeLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        add(timeLabel);
+        timeLabel = new JLabel("剩餘時間 : 00 小時 00 分鐘 00 秒");
+        add(timeLabel,BorderLayout.NORTH);
 
         hourBox = createComboBox(24);
         minuteBox = createComboBox(60);
         secondBox = createComboBox(60);
 
-        add(new JLabel("Hour:")); add(hourBox);
-        add(new JLabel("Minute:")); add(minuteBox);
-        add(new JLabel("Second:")); add(secondBox);
+        JPanel comboboxPanel = new JPanel();
+        comboboxPanel.add(new JLabel("時:")); comboboxPanel.add(hourBox);
+        comboboxPanel.add(new JLabel("分:")); comboboxPanel.add(minuteBox);
+        comboboxPanel.add(new JLabel("秒:")); comboboxPanel.add(secondBox);
+        add(comboboxPanel,BorderLayout.CENTER);
 
-        startButton = new JButton("Start");
-        pauseButton = new JButton("Pause");
-        resetButton = new JButton("Reset");
+        startButton = new JButton("開始");
+        pauseButton = new JButton("暫停");
+        resetButton = new JButton("重置");
         commonTimesButton = new JButton("常用時間");
         
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(startButton);
+        buttonPanel.add(pauseButton);
+        buttonPanel.add(resetButton);
+        buttonPanel.add(commonTimesButton);
+        add(buttonPanel, BorderLayout.SOUTH);
+
         add(startButton); add(pauseButton); add(resetButton);add(commonTimesButton);
 
         logic = new CountdownTimerLogic(new CountdownTimerLogic.CountdownCallback() {
@@ -38,7 +46,7 @@ public class CountdownTimerPanel extends JPanel {
             public void onFinish() {
                 SwingUtilities.invokeLater(() -> {
                     updateTimeLabel(0);
-                    JOptionPane.showMessageDialog(CountdownTimerPanel.this, "Time's up!");
+                    JOptionPane.showMessageDialog(CountdownTimerPanel.this, "時間到!");
                     resetUI();
                 });
             }
@@ -89,7 +97,7 @@ public class CountdownTimerPanel extends JPanel {
         int h = totalSeconds / 3600;
         int m = (totalSeconds / 60) % 60;
         int s = totalSeconds % 60;
-        timeLabel.setText(String.format("remain time: %02d hour %02d minute %02d second", h, m, s));
+        timeLabel.setText(String.format("剩餘時間: %02d 小時 %02d 分鐘 %02d 秒", h, m, s));
     }
 
     private void resetUI() {

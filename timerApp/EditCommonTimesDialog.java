@@ -3,18 +3,17 @@ package myPackage;
 import javax.swing.*;
 import java.awt.*;
 
-
-public class AddCommonTimesDialog extends Dialog{
+public class EditCommonTimesDialog extends Dialog{
     private static String result = null;
 
-    public static String showDialog(Window parent) {
-        AddCommonTimesDialog dialog = new AddCommonTimesDialog(parent);
+    public static String showDialog(Window parent,int editHour,int editMinute,int editSecond) {
+        EditCommonTimesDialog dialog = new EditCommonTimesDialog(parent,editHour,editMinute,editSecond);
         dialog.setVisible(true);
         return result;
     }
-    
-    public AddCommonTimesDialog(Window parent){
-        super(parent , "新增常用時間", ModalityType.APPLICATION_MODAL);
+
+    public EditCommonTimesDialog(Window parent,int editHour,int editMinute,int editSecond){
+        super(parent , "修改常用時間", ModalityType.APPLICATION_MODAL);
         setSize(300,150);
         setLocationRelativeTo(parent);
 
@@ -24,9 +23,13 @@ public class AddCommonTimesDialog extends Dialog{
         JComboBox<Integer> minuteBox = createComboBox(60);
         JComboBox<Integer> secondBox = createComboBox(60);
 
-        inputPanel.add(new JLabel("時:")); inputPanel.add(hourBox);
-        inputPanel.add(new JLabel("分:")); inputPanel.add(minuteBox);
-        inputPanel.add(new JLabel("秒:")); inputPanel.add(secondBox);
+        inputPanel.add(new JLabel("Hour:")); inputPanel.add(hourBox);
+        inputPanel.add(new JLabel("Minute:")); inputPanel.add(minuteBox);
+        inputPanel.add(new JLabel("Second:")); inputPanel.add(secondBox);
+
+        hourBox.setSelectedIndex(editHour);
+        minuteBox.setSelectedIndex(editMinute);
+        secondBox.setSelectedIndex(editSecond);
 
         add(inputPanel,BorderLayout.CENTER);
 
