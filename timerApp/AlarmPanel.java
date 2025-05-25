@@ -24,6 +24,7 @@ public class AlarmPanel extends JPanel {
 
         JButton addButton = new JButton("新增鬧鐘");
         JButton deleteButton = new JButton("刪除選取");
+        JButton toggleButton = new JButton("啟用/停用");
 
         addButton.addActionListener(e -> {
             Alarm alarm = AddAlarmTimeDialog.showAddDialog(this);
@@ -41,14 +42,29 @@ public class AlarmPanel extends JPanel {
                 saveAlarms();
             }
         });
+        toggleButton.addActionListener(e -> {
+            Alarm selected = alarmList.getSelectedValue();
+            if (selected != null) {
+                selected.setEnabled(!selected.isEnabled());
+                alarmList.repaint(); 
+                saveAlarms();
+            }
+        });
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(addButton);
         buttonPanel.add(deleteButton);
+        buttonPanel.add(toggleButton);
         add(buttonPanel, BorderLayout.SOUTH);
 
         // 啟動定時檢查鬧鐘
-        new Timer(1000 * 60, e -> checkAlarms()).start(); // 每分鐘檢查一次
+        new Timer(1000 , e ->{
+            LocalTime now = LocalTime.now();
+            if(now.getSecond()==0){
+                checkAlarms(now);
+            }            
+        }).start(); // 每分鐘檢查一次 
+        
         try {
             alarmManager.loadFromFile(saveFile);
             for (Alarm alarm : alarmManager.getAlarms()) {
@@ -65,9 +81,10 @@ public class AlarmPanel extends JPanel {
         return box;
     }
 
-    private void checkAlarms() {
-        List<Alarm> triggered = alarmManager.checkAlarms(LocalTime.now());
+    private void checkAlarms(LocalTime now) {
+        List<Alarm> triggered = alarmManager.checkAlarms(now);
         for (Alarm alarm : triggered) {
+            if (!alarm.isEnabled()) continue;
             SwingUtilities.invokeLater(() ->
                 JOptionPane.showMessageDialog(this, alarm.getMessage(), "鬧鐘", JOptionPane.INFORMATION_MESSAGE)
             );

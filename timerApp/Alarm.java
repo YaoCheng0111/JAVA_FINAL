@@ -12,16 +12,18 @@ public class Alarm {
     private LocalTime time;
     private String message;
     private Set<DayOfWeek> repeatDays = new HashSet<>();
+    private boolean enabled = true;
 
     public Alarm(LocalTime time, String message) {
         this.time = time;
         this.message = message;
     }
 
-    public Alarm(LocalTime time, String message,Set<DayOfWeek> repeatDays) {
+    public Alarm(LocalTime time, String message,Set<DayOfWeek> repeatDays,boolean enabled) {
         this.time = time;
         this.message = message;
         this.repeatDays = repeatDays != null ? repeatDays : new HashSet<>();
+        this.enabled = enabled;
     }
 
     public LocalTime getTime() {
@@ -38,6 +40,14 @@ public class Alarm {
 
     public void setRepeatDays(Set<DayOfWeek> repeatDays) {
         this.repeatDays = repeatDays;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+    
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override
@@ -58,8 +68,8 @@ public class Alarm {
         .reduce((a, b) -> a + "," + b)
         .orElse("");
 
-    return String.format("%02d:%02d - %s (%s)", 
-        time.getHour(), time.getMinute(), message,days);
+    return String.format("%02d:%02d - %s (%s) [%s]", 
+        time.getHour(), time.getMinute(), message,days,enabled ? "開":"關");
     }
 
     // 存檔格式: HH:MM|message|MON,TUE,WED
@@ -67,6 +77,7 @@ public class Alarm {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%02d:%02d", time.getHour(), time.getMinute()))
           .append("|").append(message.replace("|", "｜"));
+        
         if (!repeatDays.isEmpty()) {
             sb.append("|");
             repeatDays.stream()
@@ -74,6 +85,9 @@ public class Alarm {
                 .forEach(day -> sb.append(day.name()).append(","));
             sb.setLength(sb.length() - 1); // 去除最後的逗號
         }
+
+        sb.append("|").append(enabled);
+        
         return sb.toString();
     }
 
@@ -89,14 +103,19 @@ public class Alarm {
             String message = parts[1];
 
             Set<DayOfWeek> repeat = new HashSet<>();
-            if (parts.length >= 3) {
+            if (parts.length >= 3 && !parts[2].isEmpty()) {
                 String[] dayParts = parts[2].split(",");
                 for (String s : dayParts) {
                     repeat.add(DayOfWeek.valueOf(s));
                 }
             }
 
-            return new Alarm(LocalTime.of(hour, min), message, repeat);
+            boolean enabled = true;
+            if (parts.length >= 4) {
+                enabled = Boolean.parseBoolean(parts[3]);
+            }
+
+            return new Alarm(LocalTime.of(hour, min), message, repeat,enabled);
         } catch (Exception e) {
             return null;
         }

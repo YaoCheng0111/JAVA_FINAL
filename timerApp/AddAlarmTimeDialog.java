@@ -33,10 +33,12 @@ public class AddAlarmTimeDialog extends JDialog{
         JComboBox<Integer> hourBox = createComboBox(24);
         JComboBox<Integer> minuteBox = createComboBox(60);
         JTextField messageField = new JTextField(15);
+        JCheckBox enableCheckBox = new JCheckBox("啟用", true);
 
         inputPanel.add(new JLabel("時:")); inputPanel.add(hourBox);
         inputPanel.add(new JLabel("分:")); inputPanel.add(minuteBox);
         inputPanel.add(new JLabel("訊息:")); inputPanel.add(messageField);
+        inputPanel.add(enableCheckBox);
 
         add(inputPanel,BorderLayout.CENTER);
         
@@ -56,7 +58,8 @@ public class AddAlarmTimeDialog extends JDialog{
             int h = (int)hourBox.getSelectedItem();
             int m = (int)minuteBox.getSelectedItem();
             String msg = messageField.getText().isEmpty() ? "時間到了!" : messageField.getText(); 
-            
+            boolean enabled = enableCheckBox.isSelected();
+
             Set<DayOfWeek> selectedDays = new HashSet<>();
             for (Map.Entry<DayOfWeek, JCheckBox> entry : dayCheckBoxes.entrySet()) {
                 if (entry.getValue().isSelected()) {
@@ -64,7 +67,7 @@ public class AddAlarmTimeDialog extends JDialog{
                 }
             }  
 
-            result = new Alarm(LocalTime.of(h,m),msg,selectedDays);
+            result = new Alarm(LocalTime.of(h,m),msg,selectedDays,enabled);
             dispose();
         });
 
