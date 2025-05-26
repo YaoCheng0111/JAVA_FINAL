@@ -15,8 +15,8 @@ class ItemPanel extends JPanel {
     private StoreItem equippedItem = null; // 目前裝備中的商品
     private ArrayList<JButton> equipButtons = new ArrayList<>();
 
-    public ItemPanel(TokenPanel tokenPanel) {
-        this.userData = new UserData(100);
+    public ItemPanel(UserData userData, TokenPanel tokenPanel) {
+        this.userData = userData;
         this.storeItems = new ArrayList<>();
 
         storeItems.add(new StoreItem("huh", 50, "source/huh_cat.jpg"));
@@ -26,16 +26,16 @@ class ItemPanel extends JPanel {
         storeItems.add(new StoreItem("serious", 50, "source/serious_cat.jpg"));
         //storeItems.add(new StoreItem("oiia", 50, "source/uiiaCat.png"));
 
-        StoreItem uiia=new StoreItem("oiia",0,"source/oiia_cat.jpg");
+        StoreItem uiia = new StoreItem("oiia", 0, "source/oiia_cat.jpg");
         storeItems.add(uiia);
         userData.purchaseItem(uiia);
 
-        equippedItem=uiia;
+        equippedItem = uiia;
 
         setLayout(new GridLayout(2, 3, 10, 10)); // row=2, col=3 排列
-        
+
         for (StoreItem item : storeItems) {
-            
+
             JPanel itemPanel = new JPanel();
             itemPanel.setLayout(new BorderLayout());
 
@@ -61,7 +61,7 @@ class ItemPanel extends JPanel {
 
             // 購買按鈕狀態檢查
             buyButton.setEnabled(userData.getTokens() >= item.getPrice());
-            
+
             // 購買邏輯
             buyButton.addActionListener(new ActionListener() {
                 @Override
@@ -90,7 +90,6 @@ class ItemPanel extends JPanel {
                 }
             });
 
-
             if (userData.hasItem(item.getName())) {     //default是裝備uiiaCat，避免每次新增按鈕的時候uiiaCat介面被刷新
                 buyButton.setText("已購買");
                 buyButton.setEnabled(false);
@@ -104,7 +103,6 @@ class ItemPanel extends JPanel {
                     equipButton.setEnabled(true);
                 }
             }
-
 
             itemPanel.add(itemImage, BorderLayout.NORTH);
             itemPanel.add(itemLabel, BorderLayout.CENTER);

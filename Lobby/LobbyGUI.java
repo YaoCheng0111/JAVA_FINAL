@@ -7,6 +7,7 @@ import javax.swing.*;
 public class LobbyGUI {
 
     private JLabel imageLabel;
+    private UserData userData = new UserData(100);
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new LobbyGUI().createUI());
@@ -59,7 +60,7 @@ public class LobbyGUI {
 
         // Button1 點擊 → 進入 mainFrame
         upButton.addActionListener(e -> {
-            new mainFrame().setVisible(true);
+            new mainFrame(userData).setVisible(true);
 
         });
 
