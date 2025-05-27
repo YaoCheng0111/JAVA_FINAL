@@ -3,7 +3,6 @@ package myPackage;
 import java.util.HashSet;
 import java.util.prefs.Preferences;
 
-;
 
 class UserData {
 
