@@ -1,0 +1,20 @@
+編譯: 
+javac -d out 資料夾名稱/*.java
+會用到的資料夾:
+store/*.java    Lobby/*.java    equipItemManager/*.java    HabitTracker/*.java    timerApp/*.java
+執行: 
+java -cp out myPackage.檔名
+
+把 main 的最新內容 merge 到你的 branch
+1.切換回自己的 branch
+git checkout timer
+2.取得 GitHub 上最新的 main
+git fetch origin
+3. 把最新的 main 合併到你現在的 branch
+git merge origin/main -m "merge main into branch"
+4.（選擇性）把更新後的 feature branch 推回 GitHub
+git push origin timer
+
+git add .
+git commit -m "組長偉大"
+git push origin 資料夾名稱
