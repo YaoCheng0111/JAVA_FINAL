@@ -1,50 +1,51 @@
 package myPackage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Habit {
-    public String name;
-    public List<HabitSchedule> schedules = new ArrayList<>();
-    public Set<String> checkIns = new HashSet<>();
+    private String name;
+    private List<Boolean> checkInStatus;
 
     public Habit(String name) {
         this.name = name;
-    }
-
-    public void addSchedule(int day, int startHour, int startMinute, int endHour, int endMinute) {
-        schedules.add(new HabitSchedule(day, startHour, startMinute, endHour, endMinute));
-    }
-
-    public String getScheduleText() {
-        if (schedules.isEmpty())
-            return "無排程";
-        StringBuilder sb = new StringBuilder();
-        for (HabitSchedule s : schedules) {
-            sb.append(s.toDisplayString()).append(" ");
+        this.checkInStatus = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            checkInStatus.add(false);
         }
-        return sb.toString().trim();
     }
 
-    public boolean shouldRemindNow() {
-        Calendar now = Calendar.getInstance();
-        int today = now.get(Calendar.DAY_OF_WEEK);
-        int hour = now.get(Calendar.HOUR_OF_DAY);
-        int minute = now.get(Calendar.MINUTE);
-        for (HabitSchedule s : schedules) {
-            if (s.day == today && s.startHour == hour && s.startMinute == minute) {
-                return true;
+    //空的建構子給Gson用(反序列化時會用到)
+    public Habit() {
+        this.name = "";
+        this.checkInStatus = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            checkInStatus.add(false);
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<Boolean> getCheckInStatus() {
+        //保證不會回傳null，且長度必須是7(七天)
+        if (checkInStatus == null) {
+            checkInStatus = new ArrayList<>();
+            for (int i = 0; i < 7; i++) {
+                checkInStatus.add(false);
             }
+        } else if (checkInStatus.size() != 7) {
+            List<Boolean> fixed = new ArrayList<>();
+            for (int i = 0; i < 7; i++) {
+                fixed.add(i < checkInStatus.size() ? checkInStatus.get(i) : false);
+            }
+            checkInStatus = fixed;
         }
-        return false;
-    }
-
-    public boolean isCheckedInToday() {
-        String today = java.time.LocalDate.now().toString();
-        return checkIns.contains(today);
-    }
-
-    public void checkInToday() {
-        String today = java.time.LocalDate.now().toString();
-        checkIns.add(today);
+        return checkInStatus;
     }
 }

@@ -28,7 +28,7 @@ public class LobbyGUI {
         imageLabel.setHorizontalAlignment(JLabel.CENTER);
         imageLabel.setVerticalAlignment(JLabel.CENTER);
 
-        // 建立按鈕（預設隱藏）
+        // 建立按鈕(預設隱藏)
         JButton upButton = new JButton("Button1");
         downButton = new JButton("時間");
         JButton leftButton = new JButton("Button3");
@@ -142,7 +142,7 @@ public class LobbyGUI {
         });
     }
 
-    // ✅ 圖片等比例縮放
+    // 圖片等比例縮放
     private ImageIcon scaleIcon(ImageIcon icon, int maxWidth, int maxHeight) {
         Image img = icon.getImage();
         int imgWidth = icon.getIconWidth();

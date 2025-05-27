@@ -1,37 +1,64 @@
 package myPackage;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import javax.swing.*;
-import java.awt.*;
+import java.io.*;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HabitTrackerApp {
+    private static final String JSON_FILE = "habits.json";
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            HabitManager manager = new HabitManager();
-            JFrame frame = new JFrame("習慣追蹤器");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(800, 600);
+            HabitManager habitManager = new HabitManager();
 
-            JTabbedPane tabs = new JTabbedPane();
+            //讀取JSON檔案，預設讀取習慣資料
+            File jsonFile = new File(JSON_FILE);
+            if (jsonFile.exists()) {
+                try (Reader reader = new FileReader(jsonFile)) {
+                    Gson gson = new Gson();
+                    Type listType = new TypeToken<ArrayList<Habit>>() {
+                    }.getType();
+                    List<Habit> loadedHabits = gson.fromJson(reader, listType);
 
-            tabs.add("習慣清單", new HabitListPanel(manager));
-            tabs.add("表格排程", new ScheduleTablePanel(manager));
+                    if (loadedHabits != null) {
+                        for (Habit habit : loadedHabits) {
+                            habit.getCheckInStatus();
+                        }
+                        habitManager.setHabits(loadedHabits);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "讀取習慣資料失敗：" + e.getMessage());
+                }
+            }
 
-            JButton addBtn = new JButton("新增習慣");
-            addBtn.addActionListener(e -> {
-                new AddHabitDialog(frame, manager);
-                frame.getContentPane().removeAll();
-                tabs.setComponentAt(0, new HabitListPanel(manager));
-                tabs.setComponentAt(1, new ScheduleTablePanel(manager));
-                frame.getContentPane().add(tabs, BorderLayout.CENTER);
-                frame.revalidate();
-                frame.repaint();
+            HabitTrackerGUI gui = new HabitTrackerGUI(habitManager);
+            gui.setVisible(true);
+
+            //當程式關閉時儲存JSON資料
+            gui.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    saveHabits(habitManager);
+                    System.exit(0);
+                }
             });
-
-            frame.setLayout(new BorderLayout());
-            frame.add(tabs, BorderLayout.CENTER);
-            frame.add(addBtn, BorderLayout.SOUTH);
-
-            frame.setVisible(true);
         });
+    }
+
+    // 儲存習慣清單到JSON
+    private static void saveHabits(HabitManager habitManager) {
+        try (Writer writer = new FileWriter(JSON_FILE)) {
+            Gson gson = new Gson();
+            gson.toJson(habitManager.getHabits(), writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "儲存習慣資料失敗：" + e.getMessage());
+        }
     }
 }

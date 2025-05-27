@@ -1,71 +1,46 @@
 package myPackage;
 
-import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HabitManager {
-    private final Map<String, Habit> habits = new HashMap<>();
-    private final String DATA_FILE = "habits.txt";
+    private List<Habit> habits;
 
     public HabitManager() {
-        loadFromFile();
+        habits = new ArrayList<>();
     }
 
     public void addHabit(Habit habit) {
-        habits.put(habit.name, habit);
-        saveToFile();
+        habits.add(habit);
     }
 
-    public void deleteHabit(String name) {
-        habits.remove(name);
-        saveToFile();
+    public List<Habit> getHabits() {
+        return habits;
     }
 
-    public Collection<Habit> getAllHabits() {
-        return habits.values();
+    public int getHabitCount() {
+        return habits.size();
     }
 
-    public void saveToFile() {
-        try (PrintWriter writer = new PrintWriter(DATA_FILE, "UTF-8")) {
-            for (Habit habit : habits.values()) {
-                writer.print(habit.name);
-                for (HabitSchedule s : habit.schedules) {
-                    writer.print("," + s.toDataString());
-                }
-                writer.println();
-            }
-        } catch (IOException e) {
-            System.out.println("儲存失敗：" + e.getMessage());
+    public String getHabitName(int index) {
+        return habits.get(index).getName();
+    }
+
+    public boolean isChecked(int habitIndex, int dayIndex) {
+        return habits.get(habitIndex).getCheckInStatus().get(dayIndex);
+    }
+
+    public void toggleCheckIn(int habitIndex, int dayIndex) {
+        Habit habit = habits.get(habitIndex);
+        List<Boolean> status = habit.getCheckInStatus();
+        status.set(dayIndex, !status.get(dayIndex));
+    }
+
+    public void setHabits(List<Habit> newHabits) {
+        habits.clear();
+        if (newHabits != null) {
+            habits.addAll(newHabits);
         }
     }
 
-    private void loadFromFile() {
-        File file = new File(DATA_FILE);
-        if (!file.exists())
-            return;
-
-        try (Scanner fileScanner = new Scanner(file, "UTF-8")) {
-            while (fileScanner.hasNextLine()) {
-                String line = fileScanner.nextLine();
-                String[] parts = line.split(",");
-                if (parts.length >= 1) {
-                    Habit habit = new Habit(parts[0]);
-                    for (int i = 1; i < parts.length; i++) {
-                        String[] segment = parts[i].split("[-:]");
-                        if (segment.length < 5)
-                            continue;
-                        int day = Integer.parseInt(segment[0]);
-                        int startHour = Integer.parseInt(segment[1]);
-                        int startMinute = Integer.parseInt(segment[2]);
-                        int endHour = Integer.parseInt(segment[3]);
-                        int endMinute = Integer.parseInt(segment[4]);
-                        habit.addSchedule(day, startHour, startMinute, endHour, endMinute);
-                    }
-                    habits.put(habit.name, habit);
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("讀取失敗：" + e.getMessage());
-        }
-    }
 }
