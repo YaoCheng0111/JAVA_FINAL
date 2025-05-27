@@ -1,13 +1,17 @@
 package myPackage;
 
 import javax.swing.*;
+import org.w3c.dom.UserDataHandler;
 
 class TokenPanel extends JPanel {
 
     private JLabel tokenLabel;
-    private int tokens = 100; // 初始代幣數量(跟userDate的要同步)=>前端給使用者看的tokens數
+    private int tokens; // 初始代幣數量(跟userDate的要同步)=>前端給使用者看的tokens數
+    private UserData userData;
 
-    public TokenPanel() {
+    public TokenPanel(UserData userData) {
+        this.userData = userData;
+        this.tokens = userData.getTokens();
         tokenLabel = new JLabel("代幣: " + tokens);
         add(tokenLabel);
     }

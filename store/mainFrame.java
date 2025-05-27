@@ -5,23 +5,27 @@ import java.awt.*;
 
 public class mainFrame extends JFrame {
 
+    private UserData userData;
     private TokenPanel tokenPanel;
     private ItemPanel itemPanel;
 
-    public mainFrame() {
+    public mainFrame(UserData userData) {
+        this.userData = userData;
         setTitle("商店介面");
         setSize(800, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        tokenPanel = new TokenPanel();
-        itemPanel = new ItemPanel(tokenPanel);
+        tokenPanel = new TokenPanel(userData);
+        itemPanel = new ItemPanel(userData, tokenPanel);
 
         add(tokenPanel, BorderLayout.NORTH);
         add(itemPanel, BorderLayout.CENTER);
+
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new mainFrame().setVisible(true));
+        UserData userData = new UserData(100);
+        SwingUtilities.invokeLater(() -> new mainFrame(userData).setVisible(true));
     }
 }
