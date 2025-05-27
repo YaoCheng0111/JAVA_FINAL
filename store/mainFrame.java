@@ -21,6 +21,7 @@ public class mainFrame extends JFrame {
 
         add(tokenPanel, BorderLayout.NORTH);
         add(itemPanel, BorderLayout.CENTER);
+
     }
 
     public static void main(String[] args) {

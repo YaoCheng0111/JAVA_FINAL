@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 import myPackage.equipItemManager;
+import myPackage.mainFrame;
 
 class ItemPanel extends JPanel {
 
@@ -30,8 +31,14 @@ class ItemPanel extends JPanel {
         storeItems.add(uiia);
         userData.purchaseItem(uiia);
 
-        equippedItem = uiia;
-
+        //equippedItem = uiia;
+        String equippedName = userData.getEquippedItem();
+        for (StoreItem item : storeItems) {
+            if (item.getName().equals(equippedName)) {
+                equippedItem = item;
+                break;
+            }
+        }
         setLayout(new GridLayout(2, 3, 10, 10)); // row=2, col=3 排列
 
         for (StoreItem item : storeItems) {
@@ -85,8 +92,10 @@ class ItemPanel extends JPanel {
                 public void actionPerformed(ActionEvent e) {
                     equippedItem = item;
                     equipItemManager.setEquippedItem(item);
+                    userData.setEquippedItem(item.getName());
                     JOptionPane.showMessageDialog(null, "已裝備：" + item.getName());
                     updateEquipButtons();
+
                 }
             });
 
