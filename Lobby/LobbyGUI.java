@@ -7,10 +7,11 @@ import javax.swing.*;
 public class LobbyGUI {
 
     private JLabel imageLabel;
-    private JPanel southPanel; 
+    private JPanel southPanel;
     private JButton downButton;
     private JButton alarmButton;
     private JButton timerButton;
+    private UserData userData;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new LobbyGUI().createUI());
@@ -90,7 +91,9 @@ public class LobbyGUI {
 
         // 各按鈕的功能：
         alarmButton.addActionListener(e -> new AlarmDialog(frame).setVisible(true));
-        timerButton.addActionListener(e -> {new CountdownTimeDialog(frame).setVisible(true);});
+        timerButton.addActionListener(e -> {
+            new CountdownTimeDialog(frame).setVisible(true);
+        });
 
         // 點擊圖片時顯示/隱藏按鈕
         imageLabel.addMouseListener(new MouseAdapter() {
@@ -108,7 +111,7 @@ public class LobbyGUI {
 
         // Button1 點擊 → 進入 mainFrame
         upButton.addActionListener(e -> {
-            new mainFrame().setVisible(true);
+            new mainFrame(userData).setVisible(true);
 
         });
 
