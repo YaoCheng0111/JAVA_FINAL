@@ -3,8 +3,6 @@ package myPackage;
 import java.util.HashSet;
 import java.util.prefs.Preferences;
 
-;
-
 class UserData {
 
     private int tokens;     //後端紀錄的tokens數
