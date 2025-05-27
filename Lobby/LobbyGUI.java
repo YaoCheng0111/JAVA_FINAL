@@ -23,6 +23,8 @@ public class LobbyGUI {
         frame.setSize(400, 400);
         frame.setLayout(new BorderLayout());
 
+        userData = new UserData(100);
+
         // 初始圖片
         ImageIcon defaultIcon = new ImageIcon("source/oiia_cat.jpg");
         imageLabel = new JLabel(scaleIcon(defaultIcon, 200, 200));

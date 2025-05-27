@@ -1,6 +1,8 @@
 package myPackage;
 
 import javax.swing.*;
+import myPackage.equipItemManager;
+import myPackage.mainFrame;
 
 class StoreItem {
 
