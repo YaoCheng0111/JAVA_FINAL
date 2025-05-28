@@ -18,9 +18,15 @@ public class mainFrame extends JFrame {
 
         tokenPanel = new TokenPanel(userData);
         itemPanel = new ItemPanel(userData, tokenPanel);
+        userData.addTokenListener(tokenPanel);
+        JButton accessoryButton = new JButton("前往飾品店");
+        accessoryButton.addActionListener(e -> {
+            new AccessoryFrame(userData).setVisible(true);
+        });
 
         add(tokenPanel, BorderLayout.NORTH);
         add(itemPanel, BorderLayout.CENTER);
+        add(accessoryButton, BorderLayout.SOUTH);
 
     }
 

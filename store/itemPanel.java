@@ -6,9 +6,8 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.*;
 
-import myPackage.equipItemManager;
-import myPackage.mainFrame;
-
+// import myPackage.equipItemManager;
+// import myPackage.mainFrame;
 class ItemPanel extends JPanel {
 
     private UserData userData;

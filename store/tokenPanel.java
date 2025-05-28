@@ -1,9 +1,11 @@
 package myPackage;
 
 import javax.swing.*;
-import org.w3c.dom.UserDataHandler;
+//import org.w3c.dom.UserDataHandler;
 
-class TokenPanel extends JPanel {
+import myPackage.TokenListener;
+
+class TokenPanel extends JPanel implements TokenListener {
 
     private JLabel tokenLabel;
     private int tokens; // 初始代幣數量(跟userDate的要同步)=>前端給使用者看的tokens數
@@ -14,6 +16,7 @@ class TokenPanel extends JPanel {
         this.tokens = userData.getTokens();
         tokenLabel = new JLabel("代幣: " + tokens);
         add(tokenLabel);
+        userData.addTokenListener(this);
     }
 
     public void updateTokens(int amount) {
@@ -25,5 +28,11 @@ class TokenPanel extends JPanel {
 
     public int getTokens() {
         return tokens;
+    }
+
+    @Override
+    public void onTokenChanged(int newToken) {
+        tokens = newToken;
+        tokenLabel.setText("代幣:" + tokens);
     }
 }

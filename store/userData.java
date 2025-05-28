@@ -2,6 +2,7 @@ package myPackage;
 
 import java.util.HashSet;
 import java.util.prefs.Preferences;
+import java.util.ArrayList;
 
 class UserData {
 
@@ -9,6 +10,7 @@ class UserData {
     private HashSet<String> ownedItems;
     private String equippedItem;
     private Preferences prefs;
+    private ArrayList<TokenListener> listeners = new ArrayList<>();
 
     public UserData(int initialTokens) {
         this.tokens = initialTokens;
@@ -29,6 +31,7 @@ class UserData {
         }
         tokens -= item.getPrice();
         ownedItems.add(item.getName());
+        notifyTokenChanged();
         return true;
     }
 
@@ -38,6 +41,7 @@ class UserData {
 
     public void addTokens(int amount) {
         tokens += amount;
+        notifyTokenChanged();
     }
 
     public void setEquippedItem(String itemName) {
@@ -49,5 +53,15 @@ class UserData {
 
     public String getEquippedItem() {
         return equippedItem;
+    }
+
+    public void addTokenListener(TokenListener listener) {
+        listeners.add(listener);
+    }
+
+    private void notifyTokenChanged() {
+        for (TokenListener listener : listeners) {
+            listener.onTokenChanged(tokens);
+        }
     }
 }
