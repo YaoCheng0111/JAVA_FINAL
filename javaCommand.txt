@@ -6,8 +6,8 @@ store/*.java    Lobby/*.java    equipItemManager/*.java    HabitTracker/*.java  
 java -cp out myPackage.檔名
 
 特殊編譯與執行:
-javac -cp "gson-2.10.1.jar" --module-path "javafx-sdk-24.0.1/lib" --add-modules javafx.controls,javafx.fxml -d out 資料夾名稱/*.java
-java --module-path "javafx-sdk-24.0.1/lib" --add-modules javafx.controls,javafx.fxml -cp "out;gson-2.10.1.jar" myPackage.檔名
+javac -cp "gson-2.10.1.jar" --module-path "javafx-sdk-21.0.7/lib" --add-modules javafx.controls,javafx.fxml -d out 資料夾名稱/*.java
+java --module-path "javafx-sdk-21.0.7/lib" --add-modules javafx.controls,javafx.fxml -cp "out;gson-2.10.1.jar" myPackage.檔名
 
 把 main 的最新內容 merge 到你的 branch
 1.切換回自己的 branch
