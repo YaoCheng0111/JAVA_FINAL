@@ -1,1 +1,1 @@
-[{"name":"哈囉","checkInStatus":[false,false,true,true,false,false,false]},{"name":"B","checkInStatus":[false,false,false,true,false,false,false]},{"name":"AA","checkInStatus":[false,false,false,true,false,false,false]}]
+[{"name":"哈囉","checkInStatus":[false,false,true,true,true,false,false],"weeklyAttendence":false},{"name":"B","checkInStatus":[false,false,false,true,true,false,false],"weeklyAttendence":false},{"name":"AA","checkInStatus":[false,false,false,true,true,false,false],"weeklyAttendence":false}]
