@@ -5,6 +5,10 @@ store/*.java    Lobby/*.java    equipItemManager/*.java    HabitTracker/*.java  
 執行: 
 java -cp out myPackage.檔名
 
+特殊編譯與執行:
+javac -cp "gson-2.10.1.jar" --module-path "javafx-sdk-24.0.1/lib" --add-modules javafx.controls,javafx.fxml -d out 資料夾名稱/*.java
+java --module-path "javafx-sdk-24.0.1/lib" --add-modules javafx.controls,javafx.fxml -cp "out;gson-2.10.1.jar" myPackage.檔名
+
 把 main 的最新內容 merge 到你的 branch
 1.切換回自己的 branch
 git checkout timer
@@ -16,5 +20,5 @@ git merge origin/main -m "merge main into branch"
 git push origin timer
 
 git add .
-git commit -m "組長偉大"
+git commit -m "組長偉大 我超你媽"
 git push origin 資料夾名稱
