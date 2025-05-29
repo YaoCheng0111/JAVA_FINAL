@@ -12,7 +12,7 @@ import java.util.List;
 
 public class HabitManager {
     private List<Habit> habits = new ArrayList<>();
-    private static final String FILE_NAME = "habits.json";
+    private static final String FILE_NAME = "JsonData/habits.json";
 
     //從json檔抓檔案
     public HabitManager() {
