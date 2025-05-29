@@ -10,7 +10,7 @@ public class HabitTrackerApp extends Application {
         HabitManager habitManager = new HabitManager();
         HabitTrackerPane mainPane = new HabitTrackerPane(habitManager);
         Scene scene = new Scene(mainPane, 700, 400);
-        scene.getStylesheets().add(getClass().getResource("HabitTrackerstyle.css").toExternalForm()); //加入CSS
+        scene.getStylesheets().add(getClass().getResource("css/HabitTrackerstyle.css").toExternalForm()); // 加入CSS
         primaryStage.setTitle("Habit Tracker");
         primaryStage.setScene(scene);
         primaryStage.show();
