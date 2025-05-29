@@ -11,9 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HabitManager {
-    private int completionTotal;
-    private double completionRate;
-    private Boolean[] perfectClockIn = {false,false,false,false,false,false,false};
     private List<Habit> habits = new ArrayList<>();
     private static final String FILE_NAME = "habits.json";
 
@@ -53,7 +50,7 @@ public class HabitManager {
 
     //get completionTotal
     public int getCompletionTotal(){
-        completionTotal = 0;
+        int completionTotal = 0;
         for(Habit h:habits){
             for(int i=0;i<7;i++){
                 if(h.isChecked(i)){
@@ -71,8 +68,8 @@ public class HabitManager {
 
     //get completionRate
     public double getCompletionRate(){
-        completionRate = getCompletionTotal() / getHabitCount()*7;
-        return completionRate;
+        if (getHabitCount() == 0) return 0.0;
+        return (double) getCompletionTotal() / (getHabitCount() * 7);;
     }
 
     //依照table行列找isChecked
@@ -84,11 +81,9 @@ public class HabitManager {
     public Boolean isPerfectClockIn(int dayIndex){
         for(Habit h:habits){
             if(!h.isChecked(dayIndex)){
-                perfectClockIn[dayIndex]= false;
                 return false;
             }
         }
-        perfectClockIn[dayIndex] = true;
         return true;
     }
 
@@ -106,6 +101,14 @@ public class HabitManager {
         habits.get(row).toggleCheckIn(col);
     }
 
+    //當偵測到是新的一周則執行reset所有勾勾
+    public void resetAllStatus(){
+        for(Habit h:habits){
+            h.reset();
+        }
+        saveHabits();
+    }
+
     //存檔
     public void saveHabits() {
         try (FileWriter writer = new FileWriter(FILE_NAME)) {
@@ -121,14 +124,16 @@ public class HabitManager {
             Type listType = new TypeToken<List<Habit>>() {
             }.getType();
             List<Habit> loaded = new Gson().fromJson(reader, listType);
-            if (loaded != null) {
+            if (loaded != null && !loaded.isEmpty()) {
                 for (Habit h : loaded) {
                     h.setCheckInStatus(h.getCheckInStatus());
                 }
                 this.habits = loaded;
+            }else{
+                this.habits = new ArrayList<>();
             }
         } catch (Exception e) {
-            this.habits = new ArrayList<>();
+            e.printStackTrace();
         }
     }
 }

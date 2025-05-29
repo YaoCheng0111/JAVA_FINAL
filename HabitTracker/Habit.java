@@ -27,7 +27,7 @@ public class Habit {
         return checkInStatus;
     }
 
-    //*******
+    //存檔時用來檢測status完整性與回傳status值
     public void setCheckInStatus(List<Boolean> checkInStatus) {
         if (checkInStatus == null || checkInStatus.size() != 7) {
             this.checkInStatus = new ArrayList<>();
@@ -47,6 +47,13 @@ public class Habit {
     //切換check in 狀態
     public void toggleCheckIn(int dayIndex) {
         checkInStatus.set(dayIndex, !checkInStatus.get(dayIndex));
+    }
+
+    //reset
+    public void reset(){
+        for (int i = 0; i < 7; i++) {
+            checkInStatus.add(false);
+        }
     }
 
     //周全勤
