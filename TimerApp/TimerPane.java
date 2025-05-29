@@ -39,7 +39,7 @@ public class TimerPane extends BorderPane {
                     currentTimer = null;
                     setGraphic(null);
                 } else if (item instanceof String str && str.equals("ADD_NEW")) {
-                    Button addButton = new Button("➕ 新增計時器");
+                    Button addButton = new Button("+ 新增計時器");
                     addButton.setOnAction(e -> showAddForm());
                     setGraphic(addButton);
                 } else if (item instanceof TimerItem timer) {
@@ -77,7 +77,7 @@ public class TimerPane extends BorderPane {
         title.getStyleClass().add("title-label");
 
         TextField titleField = new TextField();
-        titleField.setPromptText("主題（預設：計時器）");
+        titleField.setPromptText("計時器主題（預設：計時器）");
 
         ComboBox<Integer> hourBox = new ComboBox<>();
         ComboBox<Integer> minBox = new ComboBox<>();

@@ -40,7 +40,7 @@ public class AlarmPane extends BorderPane {
                     currentAlarm = null;
                     setGraphic(null);
                 } else if (item instanceof String str && str.equals("ADD_NEW")) {
-                    Button addButton = new Button("➕ 新增鬧鐘");
+                    Button addButton = new Button("+ 新增鬧鐘");
                     addButton.setOnAction(e -> showAddForm());
                     setGraphic(addButton);
                 } else if (item instanceof AlarmItem alarm) {
@@ -118,7 +118,7 @@ public class AlarmPane extends BorderPane {
             LocalDateTime alarmTime = LocalDateTime.now()
                     .withHour(h).withMinute(m).withSecond(s).withNano(0);
 
-            // 如果設定時間比現在時間早，表示明天的時間
+            // 如果設定時間比現在時間早，顯示明天的時間
             if (alarmTime.isBefore(LocalDateTime.now())) {
                 alarmTime = alarmTime.plusDays(1);
             }

@@ -11,11 +11,11 @@ public class TimerApp extends Application {
     public void start(Stage primaryStage) {
         TabPane tabPane = new TabPane();
 
-        Tab alarmTab = new Tab("Alarm");
+        Tab alarmTab = new Tab("鬧鐘");
         alarmTab.setContent(new AlarmPane());
         alarmTab.setClosable(false);
 
-        Tab timerTab = new Tab("Timer");
+        Tab timerTab = new Tab("計時器");
         timerTab.setContent(new TimerPane());
         timerTab.setClosable(false);
 
@@ -24,7 +24,7 @@ public class TimerApp extends Application {
         Scene scene = new Scene(tabPane, 560, 350);
         scene.getStylesheets().add(getClass().getResource("css/TimerStyle.css").toExternalForm()); // 加入CSS
         primaryStage.setScene(scene);
-        primaryStage.setTitle("Alarm & Timer App");
+        primaryStage.setTitle("鬧鐘 & 計時器");
         primaryStage.show();
     }
 
