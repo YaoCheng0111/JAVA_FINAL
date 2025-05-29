@@ -1,6 +1,8 @@
 package myPackage;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -8,7 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class LobbyGUI extends Application {
@@ -20,6 +22,7 @@ public class LobbyGUI extends Application {
     private ImageView imageView;
     private StackPane root;
     private UserData userData;
+    private TokenPane tokenPane;
 
     public static void main(String[] args) {
         launch(args);
@@ -27,22 +30,31 @@ public class LobbyGUI extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // 請確保圖片路徑正確
-        imageView = new ImageView(new Image("file:source/oiia_cat.jpg"));
+
+        userData = new UserData(100);
+        tokenPane = new TokenPane(userData);
+
+        imageView = new ImageView(new Image("file:source/stand_cat.png"));
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(200);
         imageView.setFitHeight(200);
 
-        upButton = createDirectionButton("↑", "你點擊了上方按鈕");
+        updateImage();
+
+        upButton = createDirectionButton("↑", e -> {
+            MainStage mainStage = new MainStage(userData, this);
+            mainStage.show();
+
+        });
         downButton = createDirectionButton("↓", "你點擊了下方按鈕");
         leftButton = createDirectionButton("←", "你點擊了左方按鈕");
         rightButton = createDirectionButton("→", "你點擊了右方按鈕");
+
         upButton.setPrefSize(200, 50);
         downButton.setPrefSize(200, 50);
         leftButton.setPrefSize(50, 200);
         rightButton.setPrefSize(50, 200);
 
-        // 包住圖片的 StackPane
         StackPane imageLayer = new StackPane(imageView);
         imageLayer.setPrefSize(300, 300);
 
@@ -57,7 +69,7 @@ public class LobbyGUI extends Application {
         imageView.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> toggleButtonsVisibility());
 
         Scene scene = new Scene(root, 400, 400);
-        scene.getStylesheets().add(getClass().getResource("css/Lobbystyle.css").toExternalForm());// 引入CSS
+        scene.getStylesheets().add(getClass().getResource("css/Lobbystyle.css").toExternalForm());
         primaryStage.setTitle("Lobby GUI");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -67,6 +79,13 @@ public class LobbyGUI extends Application {
         Button button = new Button(label);
         button.setVisible(false);
         button.setOnAction(e -> showAlert(message));
+        return button;
+    }
+
+    private Button createDirectionButton(String label, EventHandler<ActionEvent> handler) {
+        Button button = new Button(label);
+        button.setVisible(false);
+        button.setOnAction(handler);
         return button;
     }
 
@@ -91,5 +110,24 @@ public class LobbyGUI extends Application {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    /**
+     * 同步裝備圖片用 *
+     */
+    public void updateImage() {
+        String equipped = userData.getEquippedItem();
+        if (equipped != null) {
+            Image image = new Image("file:source/" + equipped + ".png");
+            imageView.setImage(image);
+        }
+    }
+
+    public UserData getUserData() {
+        return userData;
+    }
+
+    public TokenPane getTokenPane() {
+        return tokenPane;
     }
 }
