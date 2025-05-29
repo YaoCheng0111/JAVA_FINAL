@@ -172,7 +172,7 @@ public class AlarmPane extends BorderPane {
 
         cancel.setOnAction(e -> showList());
 
-        VBox buttons = new VBox(10, confirm, cancel);
+        HBox buttons = new HBox(10, confirm, cancel);
         form.getChildren().addAll(titleLabel, titleField, timeRow, buttons);
 
         setCenter(form);
