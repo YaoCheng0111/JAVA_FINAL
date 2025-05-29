@@ -1,4 +1,4 @@
-package HabitTracker;
+package myPackage;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -15,14 +15,14 @@ public class WeeklyManager {
     private LocalDate today;
     private LocalDate thisSunday;
     private List<LocalDate> thisWeek = new ArrayList<>();
-    private static final String FILE_NAME = "week.json";
+    private static final String FILE_NAME = "JsonData/week.json";
 
     //從json檔抓檔案
     public WeeklyManager() {
         today = LocalDate.now();
         thisSunday = today.minusDays(today.getDayOfWeek().getValue() % 7);
         newWeek = false;
-        loadWeek();
+        //loadWeek();
     }
 
     //獲取每次打開程式時是否為新的一周

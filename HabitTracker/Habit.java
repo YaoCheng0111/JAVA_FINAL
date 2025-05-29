@@ -65,21 +65,4 @@ public class Habit {
         }
         return true;
     }
-
-    //reset
-    public void reset(){
-        for (int i = 0; i < 7; i++) {
-            checkInStatus.add(false);
-        }
-    }
-
-    //周全勤
-    public boolean isWeeklyAttendence(){
-        for(int i=0;i<7;i++){
-            if(!isChecked(i)){
-                return false;
-            }
-        }
-        return true;
-    }
 }
