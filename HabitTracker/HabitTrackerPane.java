@@ -15,7 +15,7 @@ public class HabitTrackerPane extends BorderPane {
     private final HabitManager habitManager;
     private final GridPane tableGrid;
 
-    public HabitTrackerPane(HabitManager habitManager) {
+    public HabitTrackerPane(HabitManager habitManager,WeeklyManager weeklyManager) {
         this.habitManager = habitManager;
         this.tableGrid = new GridPane();
 
