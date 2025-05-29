@@ -1,5 +1,8 @@
 package myPackage;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
@@ -10,8 +13,14 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+
 
 public class AlarmPane extends BorderPane {
 
@@ -40,6 +49,9 @@ public class AlarmPane extends BorderPane {
                 buttonsBox.managedProperty().bind(buttonsBox.visibleProperty());
                 card.getChildren().add(buttonsBox);
 
+                loadAlarmsFromFile();
+                showList();
+
                 card.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
                     showingDetails = !showingDetails;
                     buttonsBox.setVisible(showingDetails);
@@ -57,6 +69,7 @@ public class AlarmPane extends BorderPane {
                 deleteBtn.setOnAction(e -> {
                     if (currentAlarm != null) {
                         alarms.remove(currentAlarm);
+                        saveAlarmsToFile();
                         showingDetails = false;
                         showList();
                     }
@@ -103,6 +116,32 @@ public class AlarmPane extends BorderPane {
         });
 
         showList();
+    }
+
+    // GSON相關
+    private final Gson gson = new GsonBuilder()
+        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+        .setPrettyPrinting()
+        .create();
+
+    private final String FILE_PATH = "out/myPackage/JsonData/alarms.json";
+
+    private void loadAlarmsFromFile() {
+        try (FileReader reader = new FileReader(FILE_PATH)) {
+            Type listType = new TypeToken<List<AlarmItem>>() {}.getType();
+            List<AlarmItem> loaded = gson.fromJson(reader, listType);
+            if (loaded != null) alarms.setAll(loaded);
+        } catch (IOException e) {
+            System.out.println("無法載入鬧鐘檔案: " + e.getMessage());
+        }
+    }
+
+    private void saveAlarmsToFile() {
+        try (FileWriter writer = new FileWriter(FILE_PATH)) {
+            gson.toJson(alarms, writer);
+        } catch (IOException e) {
+            System.out.println("無法儲存鬧鐘檔案: " + e.getMessage());
+        }
     }
 
     private String getRemainingTime(LocalDateTime alarmTime) {
@@ -166,7 +205,9 @@ public class AlarmPane extends BorderPane {
             }
 
             String title = titleField.getText().isBlank() ? "鬧鐘" : titleField.getText();
+            title += String.format(" (%02d:%02d:%02d)", h, m, s);
             alarms.add(new AlarmItem(title, alarmTime));
+            saveAlarmsToFile();
             showList();
         });
 

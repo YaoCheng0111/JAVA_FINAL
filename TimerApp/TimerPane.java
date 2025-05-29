@@ -1,16 +1,35 @@
 package myPackage;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.List;
+
 
 public class TimerPane extends BorderPane {
 
@@ -18,6 +37,9 @@ public class TimerPane extends BorderPane {
     private final ListView<Object> listView = new ListView<>();
 
     public TimerPane() {
+
+        loadTimers();
+
         listView.setCellFactory(list -> new ListCell<>() {
             private final Label titleLabel = new Label();
             private final Label timeLabel = new Label();
@@ -58,6 +80,7 @@ public class TimerPane extends BorderPane {
                 deleteBtn.setOnAction(e -> {
                     if (currentTimer != null) {
                         timers.remove(currentTimer);
+                        saveTimers();
                         showingDetails = false;
                         showList();
                     }
@@ -106,6 +129,42 @@ public class TimerPane extends BorderPane {
 
         showList();
     }
+
+    //GSON
+    private final String timerFile = "out/myPackage/JsonData/timers.json";
+    private final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+            .setPrettyPrinting()
+            .create();
+
+    public void saveTimers() {
+        try {
+            String json = gson.toJson(timers);
+            Files.writeString(Paths.get(timerFile), json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadTimers() {
+        try {
+            var path = Paths.get(timerFile);
+            if (!Files.exists(path)) {
+                Files.createDirectories(path.getParent());
+                Files.writeString(path, "[]");  // 建立空的 JSON 陣列
+            }
+            String json = Files.readString(path);
+            List<TimerItem> list = gson.fromJson(json, new TypeToken<List<TimerItem>>(){}.getType());
+            timers.clear();
+            if (list != null) {
+                timers.addAll(list);
+            }
+            showList();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void showList() {
         ObservableList<Object> displayItems = FXCollections.observableArrayList();
@@ -163,8 +222,10 @@ public class TimerPane extends BorderPane {
 
             LocalDateTime end = LocalDateTime.now().plusSeconds(totalSecs);
             String titleStr = titleField.getText().isBlank() ? "計時器" : titleField.getText();
+            titleStr += String.format(" (%02d:%02d:%02d)", h, m, s);
 
             timers.add(new TimerItem(titleStr, end, totalSecs));
+            saveTimers();
             showList();
         });
 
