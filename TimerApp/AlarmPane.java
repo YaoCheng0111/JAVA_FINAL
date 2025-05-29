@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 
@@ -19,12 +20,53 @@ public class AlarmPane extends BorderPane {
 
     public AlarmPane() {
         listView.setCellFactory(list -> new ListCell<>() {
-            private final Label label = new Label();
+            private final Label titleLabel = new Label();
+            private final Label timeLabel = new Label();
+            private final Button restartBtn = new Button("重新開始");
+            private final Button deleteBtn = new Button("刪除");
+            private final HBox buttonsBox = new HBox(10, restartBtn, deleteBtn);
+            private final VBox card = new VBox(5, titleLabel, timeLabel);
             private AlarmItem currentAlarm;
             private Timeline updateTimeline;
+            private boolean showingDetails = false;
 
             {
                 setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                card.setPadding(new Insets(10));
+                card.setStyle("-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 6, 0, 0, 2);");
+                titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+                timeLabel.setStyle("-fx-text-fill: gray;");
+                buttonsBox.setVisible(false);
+                buttonsBox.managedProperty().bind(buttonsBox.visibleProperty());
+                card.getChildren().add(buttonsBox);
+
+                card.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+                    showingDetails = !showingDetails;
+                    buttonsBox.setVisible(showingDetails);
+                    e.consume();
+                });
+
+                restartBtn.setOnAction(e -> {
+                    if (currentAlarm != null) {
+                        currentAlarm.restart();
+                        updateTimeLabel();
+                    }
+                });
+
+                deleteBtn.getStyleClass().add("cancel-button");
+                deleteBtn.setOnAction(e -> {
+                    if (currentAlarm != null) {
+                        alarms.remove(currentAlarm);
+                        showingDetails = false;
+                        showList();
+                    }
+                });
+            }
+
+            private void updateTimeLabel() {
+                if (currentAlarm != null) {
+                    timeLabel.setText(getRemainingTime(currentAlarm.alarmTime));
+                }
             }
 
             @Override
@@ -45,16 +87,17 @@ public class AlarmPane extends BorderPane {
                     setGraphic(addButton);
                 } else if (item instanceof AlarmItem alarm) {
                     currentAlarm = alarm;
-                    label.setText(alarm.title + " - " + getRemainingTime(alarm.alarmTime));
-                    setGraphic(label);
+                    titleLabel.setText(alarm.title);
+                    updateTimeLabel();
 
-                    updateTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
-                        if (currentAlarm != null) {
-                            label.setText(currentAlarm.title + " - " + getRemainingTime(currentAlarm.alarmTime));
-                        }
-                    }));
+                    showingDetails = false;
+                    buttonsBox.setVisible(false);
+
+                    updateTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimeLabel()));
                     updateTimeline.setCycleCount(Timeline.INDEFINITE);
                     updateTimeline.play();
+
+                    setGraphic(card);
                 }
             }
         });
@@ -118,7 +161,6 @@ public class AlarmPane extends BorderPane {
             LocalDateTime alarmTime = LocalDateTime.now()
                     .withHour(h).withMinute(m).withSecond(s).withNano(0);
 
-            // 如果設定時間比現在時間早，顯示明天的時間
             if (alarmTime.isBefore(LocalDateTime.now())) {
                 alarmTime = alarmTime.plusDays(1);
             }
@@ -130,7 +172,7 @@ public class AlarmPane extends BorderPane {
 
         cancel.setOnAction(e -> showList());
 
-        HBox buttons = new HBox(10, confirm, cancel);
+        VBox buttons = new VBox(10, confirm, cancel);
         form.getChildren().addAll(titleLabel, titleField, timeRow, buttons);
 
         setCenter(form);

@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 
@@ -18,12 +19,55 @@ public class TimerPane extends BorderPane {
 
     public TimerPane() {
         listView.setCellFactory(list -> new ListCell<>() {
-            private final Label label = new Label();
+            private final Label titleLabel = new Label();
+            private final Label timeLabel = new Label();
+            private final Button restartBtn = new Button("重新開始");
+            private final Button deleteBtn = new Button("刪除");
+            private final HBox buttonsBox = new HBox(10, restartBtn, deleteBtn);
+            private final VBox card = new VBox(5, titleLabel, timeLabel);
             private TimerItem currentTimer;
             private Timeline updateTimeline;
+            private boolean showingDetails = false;
 
             {
                 setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                card.setPadding(new Insets(10));
+                card.setStyle("-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 6, 0, 0, 2);");
+                titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+                timeLabel.setStyle("-fx-text-fill: gray;");
+                buttonsBox.setVisible(false);
+                buttonsBox.managedProperty().bind(buttonsBox.visibleProperty());
+                card.getChildren().add(buttonsBox);
+
+                // 點擊卡片切換顯示/隱藏按鈕區域
+                card.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+                    showingDetails = !showingDetails;
+                    buttonsBox.setVisible(showingDetails);
+                    // 防止點擊後同時觸發 ListView 選取
+                    e.consume();
+                });
+
+                restartBtn.setOnAction(e -> {
+                    if (currentTimer != null) {
+                        currentTimer.restart();
+                        updateTimeLabel();
+                    }
+                });
+
+                deleteBtn.getStyleClass().add("cancel-button");
+                deleteBtn.setOnAction(e -> {
+                    if (currentTimer != null) {
+                        timers.remove(currentTimer);
+                        showingDetails = false;
+                        showList();
+                    }
+                });
+            }
+
+            private void updateTimeLabel() {
+                if (currentTimer != null) {
+                    timeLabel.setText(currentTimer.getRemainingTime());
+                }
             }
 
             @Override
@@ -44,16 +88,18 @@ public class TimerPane extends BorderPane {
                     setGraphic(addButton);
                 } else if (item instanceof TimerItem timer) {
                     currentTimer = timer;
-                    label.setText(timer.title + " - " + timer.getRemainingTime());
-                    setGraphic(label);
+                    titleLabel.setText(timer.title);
+                    updateTimeLabel();
 
-                    updateTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
-                        if (currentTimer != null) {
-                            label.setText(currentTimer.title + " - " + currentTimer.getRemainingTime());
-                        }
-                    }));
+                    // 按項目顯示按鈕區域預設關閉
+                    showingDetails = false;
+                    buttonsBox.setVisible(false);
+
+                    updateTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateTimeLabel()));
                     updateTimeline.setCycleCount(Timeline.INDEFINITE);
                     updateTimeline.play();
+
+                    setGraphic(card);
                 }
             }
         });
@@ -107,10 +153,18 @@ public class TimerPane extends BorderPane {
             int h = hourBox.getValue();
             int m = minBox.getValue();
             int s = secBox.getValue();
-            LocalDateTime end = LocalDateTime.now().plusHours(h).plusMinutes(m).plusSeconds(s);
+            long totalSecs = h * 3600 + m * 60 + s;
+
+            if (totalSecs == 0) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "倒數時間不可為零", ButtonType.OK);
+                alert.show();
+                return;
+            }
+
+            LocalDateTime end = LocalDateTime.now().plusSeconds(totalSecs);
             String titleStr = titleField.getText().isBlank() ? "計時器" : titleField.getText();
 
-            timers.add(new TimerItem(titleStr, end));
+            timers.add(new TimerItem(titleStr, end, totalSecs));
             showList();
         });
 
