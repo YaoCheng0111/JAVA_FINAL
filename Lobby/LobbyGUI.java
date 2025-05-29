@@ -19,6 +19,7 @@ public class LobbyGUI extends Application {
     private Button rightButton;
     private ImageView imageView;
     private StackPane root;
+    private UserData userData;
 
     public static void main(String[] args) {
         launch(args);
