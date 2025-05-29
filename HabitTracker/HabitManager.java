@@ -104,7 +104,9 @@ public class HabitManager {
     //當偵測到是新的一周則執行reset所有勾勾
     public void resetAllStatus(){
         for(Habit h:habits){
-            h.reset();
+            for(int i=0;i<7;i++){
+                h.getCheckInStatus().set(i,false);
+            }
         }
         saveHabits();
     }

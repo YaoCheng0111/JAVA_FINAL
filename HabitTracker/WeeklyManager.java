@@ -9,6 +9,7 @@ import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WeeklyManager {
     private Boolean newWeek;
@@ -22,7 +23,7 @@ public class WeeklyManager {
         today = LocalDate.now();
         thisSunday = today.minusDays(today.getDayOfWeek().getValue() % 7);
         newWeek = false;
-        //loadWeek();
+        loadWeek();
     }
 
     //獲取每次打開程式時是否為新的一周
@@ -51,7 +52,10 @@ public class WeeklyManager {
     //存檔
     public void saveWeek() {
         try (FileWriter writer = new FileWriter(FILE_NAME)) {
-            new Gson().toJson(thisWeek, writer);
+            List<String> weekStrings = thisWeek.stream()
+                             .map(LocalDate::toString)
+                             .collect(Collectors.toList());
+            new Gson().toJson(weekStrings, writer);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,14 +64,15 @@ public class WeeklyManager {
     //讀檔
     public void loadWeek() {
         try (FileReader reader = new FileReader(FILE_NAME)) {
-            Type listType = new TypeToken<List<LocalDate>>() {
-            }.getType();
-            List<LocalDate> loaded = new Gson().fromJson(reader, listType);
+            Type listType = new TypeToken<List<String>>() {}.getType();
+            List<String> loaded = new Gson().fromJson(reader, listType);
+            
             if (loaded != null && !loaded.isEmpty()) {
-                if(loaded.get(0).equals(thisSunday)){//同一周
-                    this.thisWeek = loaded;
+                this.thisWeek = loaded.stream()
+                                 .map(LocalDate::parse) 
+                                 .collect(Collectors.toList());                
+                if(thisWeek.get(0).equals(thisSunday)){//同一周
                     this.newWeek = false;
-                    saveWeek();
                 }else{//不同周
                     this.newWeek = true;
                     setThisWeek();
