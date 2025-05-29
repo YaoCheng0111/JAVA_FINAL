@@ -69,7 +69,7 @@ public class HabitManager {
     //get completionRate
     public double getCompletionRate(){
         if (getHabitCount() == 0) return 0.0;
-        return (double) getCompletionTotal() / (getHabitCount() * 7);;
+        return (double) getCompletionTotal() / (getHabitCount() * 7);
     }
 
     //依照table行列找isChecked
