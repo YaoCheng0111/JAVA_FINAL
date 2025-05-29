@@ -61,7 +61,7 @@ public class TimerPane extends BorderPane {
                 buttonsBox.managedProperty().bind(buttonsBox.visibleProperty());
                 card.getChildren().add(buttonsBox);
 
-                // 點擊卡片切換顯示/隱藏按鈕區域
+                // 點擊切換顯示/隱藏按鈕區域
                 card.addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
                     showingDetails = !showingDetails;
                     buttonsBox.setVisible(showingDetails);
@@ -131,7 +131,7 @@ public class TimerPane extends BorderPane {
     }
 
     //GSON
-    private final String timerFile = "out/myPackage/JsonData/timers.json";
+    private final String timerFile = "JsonData/timers.json";
     private final Gson gson = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
             .setPrettyPrinting()

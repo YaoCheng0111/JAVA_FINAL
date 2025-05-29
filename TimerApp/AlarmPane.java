@@ -124,7 +124,7 @@ public class AlarmPane extends BorderPane {
         .setPrettyPrinting()
         .create();
 
-    private final String FILE_PATH = "out/myPackage/JsonData/alarms.json";
+    private final String FILE_PATH = "JsonData/alarms.json";
 
     private void loadAlarmsFromFile() {
         try (FileReader reader = new FileReader(FILE_PATH)) {

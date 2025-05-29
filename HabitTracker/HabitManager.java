@@ -11,7 +11,7 @@ import java.util.List;
 
 public class HabitManager {
     private List<Habit> habits = new ArrayList<>();
-    private static final String FILE_NAME = "out/myPackage/JsonData/habits.json";
+    private static final String FILE_NAME = "JsonData/habits.json";
 
     public HabitManager() {
         loadHabits();
