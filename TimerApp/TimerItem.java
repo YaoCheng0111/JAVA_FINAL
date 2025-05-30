@@ -81,6 +81,10 @@ public class TimerItem {
         remainingSeconds = durationSeconds;
     }
 
+    public void setRemainingSeconds(int seconds){
+        remainingSeconds = seconds;
+    }
+
     //get method
     public TimerState getState() {
         return state;

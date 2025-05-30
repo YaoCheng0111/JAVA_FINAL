@@ -150,11 +150,13 @@ public class TimerPane extends BorderPane {
                     updateButtonVisibility();
 
                     Platform.runLater(() -> {
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setContentText("時間到！");
-                        alert.setHeaderText(null);
-                        alert.setContentText(currentTimer.getTitle() + " 時間到！");
-                        alert.show(); 
+                        if (currentTimer != null) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setContentText("時間到！");
+                                alert.setHeaderText(null);
+                                alert.setContentText(currentTimer.getTitle() + " 時間到！");
+                                alert.show(); 
+                        }
                     });
 
                     timeLabel.setText(currentTimer.getRemainingTime());
@@ -237,9 +239,17 @@ public class TimerPane extends BorderPane {
             }
             String json = Files.readString(path);
             List<TimerItem> list = gson.fromJson(json, new TypeToken<List<TimerItem>>(){}.getType());
+            
             timers.clear();
             if (list != null) {
-                timers.addAll(list);
+                LocalDateTime now = LocalDateTime.now();
+                for (TimerItem t : list) {
+                    if (t.getState() == TimerItem.TimerState.RUNNING && t.getEndTime().isBefore(now)) {
+                        t.setState(TimerItem.TimerState.FINISHED);
+                        t.setRemainingSeconds(0);
+                    }
+                    timers.add(t);
+                }                 
             }
             showList();
         } catch (IOException e) {
