@@ -45,6 +45,9 @@ public class TimerItem {
     //開始
     public void start() {
         if (state == TimerState.READY || state == TimerState.PAUSED) {
+            if(remainingSeconds <= 0){
+                remainingSeconds = durationSeconds;
+            }
             endTime = LocalDateTime.now().plusSeconds(remainingSeconds);
             state = TimerState.RUNNING;
         }
@@ -74,6 +77,10 @@ public class TimerItem {
         state = TimerState.RUNNING;
     }
 
+    public void resetRemainingTime(){
+        remainingSeconds = durationSeconds;
+    }
+
     //get method
     public TimerState getState() {
         return state;
@@ -85,6 +92,10 @@ public class TimerItem {
 
     public LocalDateTime getEndTime() {
         return endTime;
+    }
+
+    public void setState(TimerState state){
+        this.state = state;
     }
 
     public long getDurationSeconds() {

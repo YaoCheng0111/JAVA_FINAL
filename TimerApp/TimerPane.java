@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -31,6 +32,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 
+
 public class TimerPane extends BorderPane {
 
     private final ObservableList<TimerItem> timers = FXCollections.observableArrayList();
@@ -41,12 +43,21 @@ public class TimerPane extends BorderPane {
         loadTimers();
 
         listView.setCellFactory(list -> new ListCell<>() {
+            //title 跟 剩餘時間
             private final Label titleLabel = new Label();
             private final Label timeLabel = new Label();
+
+            //按鈕
             private final Button restartBtn = new Button("重新開始");
             private final Button deleteBtn = new Button("刪除");
-            private final HBox buttonsBox = new HBox(10, restartBtn, deleteBtn);
+            private final Button startBtn = new Button("開始");
+            private final Button pauseBtn = new Button("暫停");
+            private final Button cancelBtn = new Button("取消");
+
+            //單個list的兩區域
+            private final HBox buttonsBox = new HBox(10, startBtn,pauseBtn,cancelBtn,restartBtn, deleteBtn);
             private final VBox card = new VBox(5, titleLabel, timeLabel);
+
             private TimerItem currentTimer;
             private Timeline updateTimeline;
             private boolean showingDetails = false;
@@ -69,10 +80,45 @@ public class TimerPane extends BorderPane {
                     e.consume();
                 });
 
+                startBtn.setOnAction(e -> {
+                    if (currentTimer != null) {
+                        currentTimer.start();
+                        saveTimers();
+                        updateTimeLabel();
+                        updateButtonVisibility();
+
+                        if (updateTimeline == null) {
+                            updateTimeline = new Timeline(new KeyFrame(Duration.seconds(1), ev -> updateTimeLabel()));
+                            updateTimeline.setCycleCount(Timeline.INDEFINITE);
+                            updateTimeline.play();
+                        }
+                    }
+                });
+                
+                pauseBtn.setOnAction(e -> {
+                    if (currentTimer != null) {
+                        currentTimer.pause();
+                        saveTimers();
+                        updateTimeLabel();
+                        updateButtonVisibility();
+                    }
+                });
+                
+                cancelBtn.setOnAction(e -> {
+                    if (currentTimer != null) {
+                        currentTimer.cancel();
+                        saveTimers();
+                        updateTimeLabel();
+                        updateButtonVisibility();
+                    }
+                });
+                
                 restartBtn.setOnAction(e -> {
                     if (currentTimer != null) {
                         currentTimer.restart();
                         updateTimeLabel();
+                        updateButtonVisibility();
+                        saveTimers();
                     }
                 });
 
@@ -88,9 +134,44 @@ public class TimerPane extends BorderPane {
             }
 
             private void updateTimeLabel() {
-                if (currentTimer != null) {
+                if (currentTimer == null) return;
+            
+                timeLabel.setText(currentTimer.getRemainingTime());
+
+                if (currentTimer.getState() == TimerItem.TimerState.FINISHED) {
+                    if (updateTimeline != null) {
+                        updateTimeline.stop();
+                        updateTimeline = null;
+                    }      
+
+                    currentTimer.setState(TimerItem.TimerState.READY);
+                    currentTimer.resetRemainingTime();
+                    saveTimers();
+                    updateButtonVisibility();
+
+                    Platform.runLater(() -> {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setContentText("時間到！");
+                        alert.setHeaderText(null);
+                        alert.setContentText(currentTimer.getTitle() + " 時間到！");
+                        alert.show(); 
+                    });
+
                     timeLabel.setText(currentTimer.getRemainingTime());
-                }
+                } 
+            }
+            
+
+            private void updateButtonVisibility() {
+                if (currentTimer == null) return;
+            
+                TimerItem.TimerState state = currentTimer.getState();
+            
+                startBtn.setVisible(state == TimerItem.TimerState.READY || state == TimerItem.TimerState.PAUSED);
+                pauseBtn.setVisible(state == TimerItem.TimerState.RUNNING);
+                cancelBtn.setVisible(state == TimerItem.TimerState.RUNNING || state == TimerItem.TimerState.PAUSED);
+                restartBtn.setVisible(state == TimerItem.TimerState.RUNNING || state == TimerItem.TimerState.PAUSED); 
+                deleteBtn.setVisible(true);  
             }
 
             @Override
@@ -111,8 +192,9 @@ public class TimerPane extends BorderPane {
                     setGraphic(addButton);
                 } else if (item instanceof TimerItem timer) {
                     currentTimer = timer;
-                    titleLabel.setText(timer.title);
+                    titleLabel.setText(timer.getTitle());
                     updateTimeLabel();
+                    updateButtonVisibility();
 
                     // 按項目顯示按鈕區域預設關閉
                     showingDetails = false;
