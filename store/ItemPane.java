@@ -26,9 +26,12 @@ public class ItemPane extends GridPane {
         this.lobbyGUI = lobbyGUI;
         items = new ArrayList<>();
 
-        items.add(new StoreItem("stand_cat", 50, "source/stand_cat.png"));
-        items.add(new StoreItem("dog", 50, "source/dog.png"));
-        items.add(new StoreItem("bird", 50, "source/bird.png"));
+        items.add(new StoreItem("stand_cat", 50, "source/stand_cat.png", 100, 100));
+        items.add(new StoreItem("new_cat", 50, "source/new_cat.png", 100, 100));
+        items.add(new StoreItem("red_cat", 50, "source/red_cat.png", 100, 100));
+        items.add(new StoreItem("rainbow_cat", 50, "source/rainbow_cat.png", 100, 100));
+        items.add(new StoreItem("RGB_cat", 50, "source/RGB_cat.png", 100, 100));
+        items.add(new StoreItem("RGB2_cat", 50, "source/RGB2_cat.png", 100, 100));
 
         String equippedName = userData.getEquippedItem();
         for (StoreItem item : items) {
@@ -40,11 +43,13 @@ public class ItemPane extends GridPane {
 
         setHgap(10);
         setVgap(10);
+        getStyleClass().add("store-grid");
 
         int col = 0, row = 0;
         for (StoreItem item : items) {
             VBox box = new VBox(5);
             box.setAlignment(Pos.CENTER);
+            box.getStyleClass().add("store-box");
 
             ImageView imageView = new ImageView(item.getJavaFXImage());
             imageView.setFitWidth(150);
@@ -52,18 +57,21 @@ public class ItemPane extends GridPane {
             imageView.setPreserveRatio(true);
 
             Label nameLabel = new Label(item.getName() + " - " + item.getPrice() + " 代幣");
+            nameLabel.getStyleClass().add("item-label");
 
             Button buyButton = new Button("購買");
             Button equipButton = new Button("裝備");
-            equipButton.setVisible(false);
+            buyButton.getStyleClass().add("buy-button");
+            equipButton.getStyleClass().add("equip-button");
 
+            equipButton.setVisible(false);
             equipButtons.add(equipButton);
 
             buyButton.setDisable(userData.getTokens() < item.getPrice());
 
             buyButton.setOnAction(e -> {
                 if (userData.getTokens() >= item.getPrice() && userData.purchaseItem(item)) {
-                    userData.addTokens(-item.getPrice());  // 這裡才是真正扣代幣！
+                    userData.addTokens(-item.getPrice());
                     buyButton.setText("已購買");
                     buyButton.setDisable(true);
                     equipButton.setVisible(true);

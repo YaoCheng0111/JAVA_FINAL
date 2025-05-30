@@ -25,21 +25,22 @@ public class AccessoryPane extends GridPane {
         this.lobbyGUI = lobbyGUI;
         this.accessories = new ArrayList<>();
 
-        // 初始化配件清單
-        accessories.add(new StoreItem("sunglasses", 10, "source/sunglasses.png"));
-        accessories.add(new StoreItem("hat", 10, "source/hat.png"));
-        accessories.add(new StoreItem("necklace", 10, "source/necklace.png"));
-        accessories.add(new StoreItem("shoes", 10, "source/shoes.png"));
-        accessories.add(new StoreItem("watch", 10, "source/watch.png"));
-        accessories.add(new StoreItem("belt", 10, "source/belt.png"));
+        accessories.add(new StoreItem("sunglasses", 10, "source/sunglasses.png", 141, 115));
+        accessories.add(new StoreItem("hat", 10, "source/hat.png", 137, 82));
+        accessories.add(new StoreItem("necklace", 10, "source/necklace.png", 153, 160));
+        accessories.add(new StoreItem("tie", 10, "source/tie.png", 143, 173));
+        accessories.add(new StoreItem("bobble_hat", 10, "source/bobble_hat.png", 144, 63));
+        accessories.add(new StoreItem("ball", 10, "source/ball.png", 70, 80));
 
-        // 讀取已裝備的配件
-        String equippedName = userData.getEquippedItem();
-        for (StoreItem item : accessories) {
-            if (item.getName().equals(equippedName)) {
-                equippedAccessory = item;
-                break;
+        String equippedName = userData.getEquippedAccessory();
+        if (equippedName != null) {
+            for (StoreItem item : accessories) {
+                if (item.getName().equals(equippedName)) {
+                    equippedAccessory = item;
+                    break;
+                }
             }
+
         }
 
         setHgap(10);
@@ -49,29 +50,34 @@ public class AccessoryPane extends GridPane {
         for (StoreItem accessory : accessories) {
             VBox box = new VBox(5);
             box.setAlignment(Pos.CENTER);
+            box.getStyleClass().add("item-card");
 
             ImageView imageView = new ImageView(accessory.getJavaFXImage());
             imageView.setFitWidth(150);
             imageView.setFitHeight(150);
             imageView.setPreserveRatio(true);
+            imageView.getStyleClass().add("image-view");
 
             Label nameLabel = new Label(accessory.getName() + " - " + accessory.getPrice() + " 代幣");
 
             Button buyButton = new Button("購買");
+            buyButton.getStyleClass().add("button-buy");
+
             Button equipButton = new Button("裝備");
+            equipButton.getStyleClass().add("button-equip");
             equipButton.setVisible(false);
 
             equipButtons.add(equipButton);
 
-            // 購買按鈕初始狀態
             buyButton.setDisable(userData.getTokens() < accessory.getPrice());
 
             buyButton.setOnAction(e -> {
                 if (userData.getTokens() >= accessory.getPrice() && userData.purchaseItem(accessory)) {
-                    userData.addTokens(-accessory.getPrice());  // 這裡才是真正扣代幣！
+                    userData.addTokens(-accessory.getPrice());
                     buyButton.setText("已購買");
                     buyButton.setDisable(true);
                     equipButton.setVisible(true);
+                    userData.addOwnedAccessory(accessory);
                     updateEquipButtons();
                 } else {
                     Alert alert = new Alert(AlertType.INFORMATION);
@@ -84,12 +90,12 @@ public class AccessoryPane extends GridPane {
 
             equipButton.setOnAction(e -> {
                 equippedAccessory = accessory;
-                userData.setEquippedItem(accessory.getName());
+                //userData.setEquippedItem(accessory.getName());
+                userData.setEquippedAccessory(accessory.getName());
                 updateEquipButtons();
-                lobbyGUI.updateImage(); // 更新畫面
+                lobbyGUI.updateImage();
             });
 
-            // 如果已購買，更新按鈕狀態
             if (userData.hasItem(accessory.getName())) {
                 buyButton.setText("已購買");
                 buyButton.setDisable(true);
@@ -97,6 +103,7 @@ public class AccessoryPane extends GridPane {
                 if (accessory == equippedAccessory) {
                     equipButton.setText("已裝備");
                     equipButton.setDisable(true);
+                    equipButton.getStyleClass().add("button-selected");
                 } else {
                     equipButton.setText("裝備");
                     equipButton.setDisable(false);
@@ -112,9 +119,9 @@ public class AccessoryPane extends GridPane {
                 row++;
             }
         }
+        updateEquipButtons();
     }
 
-    // 更新裝備按鈕狀態
     public void updateEquipButtons() {
         for (int i = 0; i < accessories.size(); i++) {
             StoreItem item = accessories.get(i);
@@ -122,6 +129,10 @@ public class AccessoryPane extends GridPane {
             if (equipButton.isVisible()) {
                 equipButton.setDisable(item == equippedAccessory);
                 equipButton.setText(item == equippedAccessory ? "已裝備" : "裝備");
+                equipButton.getStyleClass().remove("button-selected");
+                if (item == equippedAccessory) {
+                    equipButton.getStyleClass().add("button-selected");
+                }
             }
         }
     }

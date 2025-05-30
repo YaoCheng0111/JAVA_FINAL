@@ -1,5 +1,6 @@
 package myPackage;
 
+import java.util.Stack;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,6 +14,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import javafx.scene.layout.Pane;
+
 public class LobbyGUI extends Application {
 
     private Button upButton;
@@ -23,6 +26,7 @@ public class LobbyGUI extends Application {
     private StackPane root;
     private UserData userData;
     private TokenPane tokenPane;
+    private ImageView accessoryImageView;
 
     public static void main(String[] args) {
         launch(args);
@@ -38,7 +42,15 @@ public class LobbyGUI extends Application {
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(200);
         imageView.setFitHeight(200);
+        imageView.setLayoutX(100);
+        imageView.setLayoutY(100);
 
+        accessoryImageView = new ImageView();
+        accessoryImageView.setFitWidth(100);
+        accessoryImageView.setFitHeight(100);
+
+        //accessoryImageView.setLayoutX()
+        Pane imageLayer = new Pane(imageView, accessoryImageView);
         updateImage();
 
         upButton = createDirectionButton("↑", e -> {
@@ -55,7 +67,7 @@ public class LobbyGUI extends Application {
         leftButton.setPrefSize(50, 200);
         rightButton.setPrefSize(50, 200);
 
-        StackPane imageLayer = new StackPane(imageView);
+        //StackPane imageLayer = new StackPane(imageView);
         imageLayer.setPrefSize(300, 300);
 
         root = new StackPane(imageLayer, upButton, downButton, leftButton, rightButton);
@@ -120,6 +132,31 @@ public class LobbyGUI extends Application {
         if (equipped != null) {
             Image image = new Image("file:source/" + equipped + ".png");
             imageView.setImage(image);
+        }
+
+        // 飾品圖
+        String accessory = userData.getEquippedAccessory();
+        StoreItem accessoryItem = userData.getEquippedAccessoryItem();
+        if (accessory != null && !accessory.isEmpty()) {        //
+            if (accessory.equals("tie")) {
+                accessoryImageView.setImage(new Image("file:source/tie_equip.png"));
+                accessoryImageView.setFitWidth(100);
+                accessoryImageView.setFitHeight(100);
+            } else if (accessory.equals("necklace")) {
+                accessoryImageView.setImage(new Image("file:source/necklace2.png"));
+                accessoryImageView.setFitWidth(80);
+                accessoryImageView.setFitHeight(80);
+
+            } else {
+                accessoryImageView.setImage(new Image("file:source/" + accessory + ".png"));
+                accessoryImageView.setFitWidth(100);
+                accessoryImageView.setFitHeight(100);
+            }
+            accessoryImageView.setLayoutX(accessoryItem.getOffsetX());
+            accessoryImageView.setLayoutY(accessoryItem.getOffsetY());
+
+        } else {
+            accessoryImageView.setImage(null);
         }
     }
 

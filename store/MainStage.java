@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.scene.control.ScrollPane;
 
 public class MainStage extends Stage {
 
@@ -35,14 +36,20 @@ public class MainStage extends Stage {
             accessoryStage.show();
         });
 
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(itemPane);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setStyle("-fx-background-color:transparent;");
+
         root.setTop(tokenPane);
-        root.setCenter(itemPane);
+        root.setCenter(scrollPane);
         root.setBottom(openAccessoryStoreButton);
 
         tokenPane.getTokenLabel().textProperty().bind(userData.tokensProperty().asString());
 
         // 把 tokenPane 加入場景
         Scene scene = new Scene(root, 800, 600); //  正確設定 Scene
+        scene.getStylesheets().add(getClass().getResource("css/storeStyle.css").toExternalForm());
         setScene(scene);
         show();
     }

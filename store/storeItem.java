@@ -8,10 +8,15 @@ public class StoreItem {
     private int price;
     private String imagePath;
 
-    public StoreItem(String name, int price, String imagePath) {
+    private double offsetX;
+    private double offsetY;
+
+    public StoreItem(String name, int price, String imagePath, double offsetX, double offsetY) {
         this.name = name;
         this.price = price;
         this.imagePath = imagePath;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
     }
 
     public String getName() {
@@ -24,5 +29,13 @@ public class StoreItem {
 
     public Image getJavaFXImage() {
         return new Image("file:" + imagePath);
+    }
+
+    public double getOffsetX() {
+        return offsetX;
+    }
+
+    public double getOffsetY() {
+        return offsetY;
     }
 }
