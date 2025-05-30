@@ -53,6 +53,10 @@ public class Habit {
         }
     }
 
+    public void setWeeklyAttendence(boolean weeklyAttendance){
+        this.weeklyAttendence = weeklyAttendance;
+    }
+
     //周全勤
     public boolean isWeeklyAttendence(){
         for(int i=0;i<7;i++){
