@@ -124,9 +124,7 @@ public class LobbyGUI extends Application {
         alert.showAndWait();
     }
 
-    /**
-     * 同步裝備圖片用 *
-     */
+    /*-----同步store圖片跟Lobby圖片用----- */
     public void updateImage() {
         String equipped = userData.getEquippedItem();
         if (equipped != null) {
@@ -171,4 +169,5 @@ public class LobbyGUI extends Application {
     public TokenPane getTokenPane() {
         return tokenPane;
     }
+    /*-----同步store圖片跟Lobby圖片用----- */
 }
