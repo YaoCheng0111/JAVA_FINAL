@@ -147,6 +147,10 @@ public class LobbyGUI extends Application {
                 accessoryImageView.setFitWidth(80);
                 accessoryImageView.setFitHeight(80);
 
+            } else if (accessory.equals("gold_necklace")) {
+                accessoryImageView.setImage(new Image("file:source/" + accessory + ".png"));
+                accessoryImageView.setFitWidth(80);
+                accessoryImageView.setFitHeight(80);
             } else {
                 accessoryImageView.setImage(new Image("file:source/" + accessory + ".png"));
                 accessoryImageView.setFitWidth(100);

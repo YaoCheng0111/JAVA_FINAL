@@ -31,6 +31,8 @@ public class AccessoryPane extends GridPane {
         accessories.add(new StoreItem("tie", 10, "source/tie.png", 143, 173));
         accessories.add(new StoreItem("bobble_hat", 10, "source/bobble_hat.png", 144, 63));
         accessories.add(new StoreItem("ball", 10, "source/ball.png", 70, 80));
+        accessories.add(new StoreItem("bat", 10, "source/bat.png", 115, 75));
+        accessories.add(new StoreItem("gold_necklace", 10, "source/gold_necklace.png", 155, 190));
 
         String equippedName = userData.getEquippedAccessory();
         if (equippedName != null) {
@@ -114,7 +116,7 @@ public class AccessoryPane extends GridPane {
             add(box, col, row);
 
             col++;
-            if (col > 2) {
+            if (col > 3) {
                 col = 0;
                 row++;
             }
