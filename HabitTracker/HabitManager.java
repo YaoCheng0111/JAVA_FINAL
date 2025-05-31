@@ -23,7 +23,7 @@ public class HabitManager {
 
     // 從 json 檔抓檔案（預設載入第 0 週）
     public HabitManager() {
-        loadHabits(1);
+        loadHabits(0);
     }
 
     // add habit to list
@@ -115,19 +115,34 @@ public class HabitManager {
                 h.getCheckInStatus().set(i, false);
             }
         }
-        saveHabits();
+        saveHabits(0);
     }
 
     // 存檔
-    public void saveHabits() {
-        try (FileWriter writer = new FileWriter(FILE_NAME)) {
-            new Gson().toJson(habits, writer);
+    public void saveHabits(int index) {
+        try (FileReader reader = new FileReader(FILE_NAME)) {
+            // 先讀原始 JSON 二維陣列
+            JsonArray fullJsonArray = JsonParser.parseReader(reader).getAsJsonArray();
+
+            // 準備新的這一列的 habits JSON
+            Gson gson = new Gson();
+            JsonElement newRow = gson.toJsonTree(this.habits); // 目前 habits 是一維陣列
+
+            // 替換第 index 列
+            fullJsonArray.set(index, newRow);
+
+            // 存回檔案
+            try (FileWriter writer = new FileWriter(FILE_NAME)) {
+                gson.toJson(fullJsonArray, writer);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // 讀檔，改成僅載入第 index 週
+
+    // 僅載入第 index 週
     public void loadHabits(int index) {
         try (FileReader reader = new FileReader(FILE_NAME)) {
             JsonArray jsonArray = JsonParser.parseReader(reader).getAsJsonArray();

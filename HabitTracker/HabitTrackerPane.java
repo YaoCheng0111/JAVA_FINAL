@@ -34,6 +34,21 @@ public class HabitTrackerPane extends BorderPane {
         titleLabel.setMaxWidth(Double.MAX_VALUE);
         titleLabel.setAlignment(Pos.CENTER);
         setTop(titleLabel);
+        // 新增週期選擇按鈕區塊
+        Button prevWeekButton = new Button("<");
+        Button nextWeekButton = new Button(">");
+        Label weekRangeLabel = new Label(weeklyManager.getFirsDateToString() +  " - " + weeklyManager.getLasDateToString());
+        weekRangeLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+
+        HBox weekSelector = new HBox(10, prevWeekButton, weekRangeLabel, nextWeekButton);
+        weekSelector.setAlignment(Pos.CENTER);
+        weekSelector.setPadding(new Insets(10));
+
+        // 用 VBox 包住標題與週期選擇器
+        VBox topBox = new VBox(5, titleLabel, weekSelector);
+        topBox.setAlignment(Pos.CENTER);
+        setTop(topBox);
+
         BorderPane.setAlignment(titleLabel, Pos.CENTER);
 
         tableGrid.setHgap(10);
@@ -89,7 +104,7 @@ public class HabitTrackerPane extends BorderPane {
             dialog.showAndWait().ifPresent(name -> {
                 if (!name.trim().isEmpty()) {
                     habitManager.addHabit(new Habit(name.trim()));
-                    habitManager.saveHabits();
+                    habitManager.saveHabits(0);
                     refreshTable();
                 }
             });
@@ -108,7 +123,7 @@ public class HabitTrackerPane extends BorderPane {
             dialog.setContentText("Select habit to delete:");
             dialog.showAndWait().ifPresent(name -> {
                 habitManager.removeHabit(name);
-                habitManager.saveHabits();
+                habitManager.saveHabits(0);
                 refreshTable();
             });
         });
@@ -163,7 +178,7 @@ public class HabitTrackerPane extends BorderPane {
                         showAlert(habit.getName() + " 今天已經打卡過了！");
                     } else {
                         habitManager.toggleCheckIn(r, c);
-                        habitManager.saveHabits();
+                        habitManager.saveHabits(0);
                         refreshTable();
                         showAlert("打卡成功！");
                     }
