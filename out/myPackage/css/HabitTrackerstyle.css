@@ -34,3 +34,77 @@
 .button:hover {
     -fx-background-color: #45a049;
 }
+
+.perfect-check {
+    -fx-background-color: #3B82F6;
+    -fx-text-fill: white;
+    -fx-padding: 5px;
+    -fx-background-radius: 5px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+
+.info-card {
+    -fx-background-color: #f0f8ff;      /* 淺藍色背景 */
+    -fx-padding: 15px 25px;             /* 上下15px，左右25px */
+    -fx-border-radius: 8px;             /* 圓角 */
+    -fx-background-radius: 8px;         /* 圓角 */
+    -fx-border-color: #87cefa;          /* 天空藍邊框 */
+    -fx-border-width: 2px;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;             /* 深灰文字 */
+    -fx-effect: dropshadow(gaussian, rgba(135,206,250,0.5), 4, 0, 0, 2); /* 柔和陰影 */
+    -fx-alignment: center;
+    -fx-min-width: 150px;
+    -fx-min-height: 50px;
+}
+
+.full-attendance {
+    -fx-background-color: #9b59b6;  /* 紫色 */
+    -fx-text-fill: white;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 6px;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-min-width: 80px;
+    -fx-effect: dropshadow(gaussian, rgba(155,89,182,0.5), 4, 0, 0, 2); /* 柔和紫色陰影 */
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #999999;
+    -fx-background-insets: 0;
+    -fx-background-radius: 5;
+}
+
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 5;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical {
+    -fx-background-color: #e9ecef;
+    -fx-background-radius: 6px;
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color: #adb5bd;
+    -fx-background-radius: 6px;
+}
+
+
+
+
+
+
+

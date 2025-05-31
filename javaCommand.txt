@@ -20,5 +20,5 @@ git merge origin/main -m "merge main into branch"
 git push origin timer
 
 git add .
-git commit -m "組長偉大 我超你媽"
+git commit -m "窩~汁~能~"
 git push origin 資料夾名稱

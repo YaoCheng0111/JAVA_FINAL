@@ -8,6 +8,8 @@ public class TimerItem {
     public LocalDateTime endTime;
     private long durationSeconds; // 紀錄倒數時間總秒數，用於重新開始
 
+    public TimerItem() {} // Gson 需要無參數建構子
+
     public TimerItem(String title, LocalDateTime endTime, long durationSeconds) {
         this.title = title;
         this.endTime = endTime;
