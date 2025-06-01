@@ -26,7 +26,7 @@ public class ItemPane extends GridPane {
         this.lobbyGUI = lobbyGUI;
         items = new ArrayList<>();
 
-        items.add(new StoreItem("stand_cat", 50, "source/stand_cat.png", 100, 100));
+        items.add(new StoreItem("stand_cat", 0, "source/stand_cat.png", 100, 100));
         items.add(new StoreItem("new_cat", 50, "source/new_cat.png", 100, 100));
         items.add(new StoreItem("red_cat", 50, "source/red_cat.png", 100, 100));
         items.add(new StoreItem("rainbow_cat", 50, "source/rainbow_cat.png", 100, 100));
@@ -71,7 +71,7 @@ public class ItemPane extends GridPane {
 
             buyButton.setOnAction(e -> {
                 if (userData.getTokens() >= item.getPrice() && userData.purchaseItem(item)) {
-                    userData.addTokens(-item.getPrice());
+                    //userData.addTokens(-item.getPrice());
                     buyButton.setText("已購買");
                     buyButton.setDisable(true);
                     equipButton.setVisible(true);
@@ -87,7 +87,7 @@ public class ItemPane extends GridPane {
 
             equipButton.setOnAction(e -> {
                 equippedItem = item;
-                userData.setEquippedItem(item.getName());
+                userData.equipItem(item.getName());
                 updateEquipButtons();
                 lobbyGUI.updateImage();
             });

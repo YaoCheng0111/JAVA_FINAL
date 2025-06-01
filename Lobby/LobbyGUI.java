@@ -53,20 +53,20 @@ public class LobbyGUI extends Application {
         Pane imageLayer = new Pane(imageView, accessoryImageView);
         updateImage();
 
-        upButton = createDirectionButton("↑", e -> {
+        upButton = createDirectionButton("代幣商店", e -> {
             MainStage mainStage = new MainStage(userData, this);
             mainStage.show();
 
         });
 
-        downButton = createDirectionButton("鬧鐘/計時器", e->{
+        downButton = createDirectionButton("鬧鐘/計時器", e -> {
             TimerApp timerApp = new TimerApp();
             Stage newStage = new Stage();
             timerApp.start(newStage);
         });
-        
-        leftButton = createDirectionButton("←",e->showAlert("你點擊了左方按鈕"));
-        rightButton = createDirectionButton("→",e->showAlert ("你點擊了右方按鈕"));
+
+        leftButton = createDirectionButton("←", e -> showAlert("你點擊了左方按鈕"));
+        rightButton = createDirectionButton("→", e -> showAlert("你點擊了右方按鈕"));
         upButton.setPrefSize(200, 50);
         downButton.setPrefSize(200, 50);
         leftButton.setPrefSize(50, 200);
@@ -98,7 +98,6 @@ public class LobbyGUI extends Application {
         button.setOnAction(handler);
         return button;
     }
-
 
     private void toggleButtonsVisibility() {
         boolean showing = upButton.isVisible();

@@ -75,7 +75,7 @@ public class AccessoryPane extends GridPane {
 
             buyButton.setOnAction(e -> {
                 if (userData.getTokens() >= accessory.getPrice() && userData.purchaseItem(accessory)) {
-                    userData.addTokens(-accessory.getPrice());
+                    //userData.addTokens(-accessory.getPrice());
                     buyButton.setText("已購買");
                     buyButton.setDisable(true);
                     equipButton.setVisible(true);
@@ -93,7 +93,7 @@ public class AccessoryPane extends GridPane {
             equipButton.setOnAction(e -> {
                 equippedAccessory = accessory;
                 //userData.setEquippedItem(accessory.getName());
-                userData.setEquippedAccessory(accessory.getName());
+                userData.equipAccessory(accessory.getName());
                 updateEquipButtons();
                 lobbyGUI.updateImage();
             });
