@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +32,7 @@ public class WeeklyManager {
     }
 
     //獲取當周第一天
-    public LocalDate getFirsDate(){	
+    public LocalDate getFirsDate(){
         return thisWeek.get(0);
     }
 
@@ -42,17 +41,6 @@ public class WeeklyManager {
         return thisWeek.get(6);
     }
 
-    //列印當周第一天
-    public String getFirsDateToString(){	
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd");
-        return thisWeek.get(0).format(formatter);
-    }
-
-    //列印當周最後一天
-    public String getLasDateToString(){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd");
-        return thisWeek.get(6).format(formatter);
-    }
 
     //設定成這周七天
     public void setThisWeek(){
@@ -68,6 +56,7 @@ public class WeeklyManager {
             List<String> weekStrings = thisWeek.stream()
                              .map(LocalDate::toString)
                              .collect(Collectors.toList());
+            
             new Gson().toJson(weekStrings, writer);
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,7 +66,7 @@ public class WeeklyManager {
     //讀檔
     public void loadWeek() {
         try (FileReader reader = new FileReader(FILE_NAME)) {
-            Type listType = new TypeToken<List<String>>() {}.getType();
+            Type listType = new TypeToken <List<String>>() {}.getType();
             List<String> loaded = new Gson().fromJson(reader, listType);
             
             if (loaded != null && !loaded.isEmpty()) {

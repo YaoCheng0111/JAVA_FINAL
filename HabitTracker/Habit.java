@@ -11,6 +11,9 @@ public class Habit {
     public Habit(String name) {
         this.name = name;
         this.checkInStatus = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            checkInStatus.add(false);
+        }
         this.weeklyAttendence = false;
     }
 
@@ -48,13 +51,10 @@ public class Habit {
 
     //reset
     public void reset(){
+        checkInStatus.clear();
         for (int i = 0; i < 7; i++) {
             checkInStatus.add(false);
         }
-    }
-
-    public void setWeeklyAttendence(boolean weeklyAttendance){
-        this.weeklyAttendence = weeklyAttendance;
     }
 
     //周全勤

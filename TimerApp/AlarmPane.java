@@ -2,9 +2,12 @@ package myPackage;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -17,10 +20,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
-
 
 public class AlarmPane extends BorderPane {
 
@@ -31,14 +38,15 @@ public class AlarmPane extends BorderPane {
         listView.setCellFactory(list -> new ListCell<>() {
             private final Label titleLabel = new Label();
             private final Label timeLabel = new Label();
-            private final Button restartBtn = new Button("重新開始");
+            private final Button activeBtn = new Button("啟用/關閉");
             private final Button deleteBtn = new Button("刪除");
-            private final HBox buttonsBox = new HBox(10, restartBtn, deleteBtn);
+            private final HBox buttonsBox = new HBox(10, activeBtn, deleteBtn);
             private final VBox card = new VBox(5, titleLabel, timeLabel);
             private AlarmItem currentAlarm;
             private Timeline updateTimeline;
             private boolean showingDetails = false;
 
+            //listview裡面的UI
             {
                 setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
                 card.setPadding(new Insets(10));
@@ -58,10 +66,11 @@ public class AlarmPane extends BorderPane {
                     e.consume();
                 });
 
-                restartBtn.setOnAction(e -> {
+                activeBtn.setOnAction(e -> {
                     if (currentAlarm != null) {
-                        currentAlarm.restart();
+                        currentAlarm.setActive();
                         updateTimeLabel();
+                        saveAlarmsToFile();
                     }
                 });
 
@@ -76,12 +85,16 @@ public class AlarmPane extends BorderPane {
                 });
             }
 
+            //更新alarmItem的title and time label
             private void updateTimeLabel() {
                 if (currentAlarm != null) {
-                    timeLabel.setText(getRemainingTime(currentAlarm.alarmTime));
+                    titleLabel.setText(String.format("%s (%s)",currentAlarm.getTitle(),currentAlarm.getIsActive()?"啟用":"關閉"));
+                    timeLabel.setText(currentAlarm.getRemainingTime());
                 }
             }
 
+
+            //偵測是哪種object來顯示list
             @Override
             protected void updateItem(Object item, boolean empty) {
                 super.updateItem(item, empty);
@@ -100,7 +113,7 @@ public class AlarmPane extends BorderPane {
                     setGraphic(addButton);
                 } else if (item instanceof AlarmItem alarm) {
                     currentAlarm = alarm;
-                    titleLabel.setText(alarm.title);
+                    titleLabel.setText(String.format("%s (%s)",currentAlarm.getTitle(),currentAlarm.getIsActive()?"啟用":"關閉"));
                     updateTimeLabel();
 
                     showingDetails = false;
@@ -116,40 +129,14 @@ public class AlarmPane extends BorderPane {
         });
 
         showList();
+
+        //每秒鐘檢查是否要跳通知
+        Timeline checkTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> checkAlarms()));
+        checkTimeline.setCycleCount(Timeline.INDEFINITE);
+        checkTimeline.play();
     }
 
-    // GSON相關
-    private final Gson gson = new GsonBuilder()
-        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
-        .setPrettyPrinting()
-        .create();
-
-    private final String FILE_PATH = "JsonData/alarms.json";
-
-    private void loadAlarmsFromFile() {
-        try (FileReader reader = new FileReader(FILE_PATH)) {
-            Type listType = new TypeToken<List<AlarmItem>>() {}.getType();
-            List<AlarmItem> loaded = gson.fromJson(reader, listType);
-            if (loaded != null) alarms.setAll(loaded);
-        } catch (IOException e) {
-            System.out.println("無法載入鬧鐘檔案: " + e.getMessage());
-        }
-    }
-
-    private void saveAlarmsToFile() {
-        try (FileWriter writer = new FileWriter(FILE_PATH)) {
-            gson.toJson(alarms, writer);
-        } catch (IOException e) {
-            System.out.println("無法儲存鬧鐘檔案: " + e.getMessage());
-        }
-    }
-
-    private String getRemainingTime(LocalDateTime alarmTime) {
-        long secs = ChronoUnit.SECONDS.between(LocalDateTime.now(), alarmTime);
-        if (secs <= 0) return "時間到";
-        return String.format("%02d:%02d:%02d", secs / 3600, (secs % 3600) / 60, secs % 60);
-    }
-
+    //把各個list物件裝進observablelist最後做輸出
     private void showList() {
         ObservableList<Object> displayItems = FXCollections.observableArrayList();
         displayItems.add("ADD_NEW");
@@ -158,16 +145,36 @@ public class AlarmPane extends BorderPane {
         setCenter(listView);
     }
 
+    //檢查要不要響
+    private void checkAlarms() {
+        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        for (AlarmItem alarm : alarms) {
+            if (alarm.shouldTrigger(now)) {
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("鬧鐘通知");
+                    alert.setHeaderText(null);
+                    alert.setContentText(alarm.getTitle() + " 時間到！");
+                    alert.show();
+                });
+            }
+        }
+    }
+
+    //新增頁面
     private void showAddForm() {
+        //UI
         VBox form = new VBox(10);
         form.setPadding(new Insets(20));
 
+        //title
         Label titleLabel = new Label("新增鬧鐘");
         titleLabel.getStyleClass().add("title-label");
 
         TextField titleField = new TextField();
         titleField.setPromptText("鬧鐘主題 (預設：鬧鐘)");
 
+        //alarmTime
         ComboBox<Integer> hourBox = new ComboBox<>();
         ComboBox<Integer> minBox = new ComboBox<>();
         ComboBox<Integer> secBox = new ComboBox<>();
@@ -188,6 +195,17 @@ public class AlarmPane extends BorderPane {
                 new Label("sec:"), secBox
         );
 
+        // repeatDays 
+        Label repeatLabel = new Label("重複星期：");
+        String[] dayNames = {"日", "一", "二", "三", "四", "五", "六"};
+        List<CheckBox> dayCheckboxes = new ArrayList<>();
+        for (String name : dayNames) {
+            dayCheckboxes.add(new CheckBox(name));
+        }
+        HBox repeatRow = new HBox(10);
+        repeatRow.getChildren().addAll(repeatLabel);
+        repeatRow.getChildren().addAll(dayCheckboxes);
+
         Button confirm = new Button("新增");
         Button cancel = new Button("取消");
         cancel.getStyleClass().add("cancel-button");
@@ -197,16 +215,24 @@ public class AlarmPane extends BorderPane {
             int m = minBox.getValue();
             int s = secBox.getValue();
 
-            LocalDateTime alarmTime = LocalDateTime.now()
-                    .withHour(h).withMinute(m).withSecond(s).withNano(0);
-
-            if (alarmTime.isBefore(LocalDateTime.now())) {
-                alarmTime = alarmTime.plusDays(1);
+            // 轉換 checkbox 勾選狀態成 repeatDays (boolean list)
+            List<Boolean> repeatDays = new ArrayList<>();
+            int sevenFalse=0;
+            for (CheckBox cb : dayCheckboxes) {
+                if(!cb.isSelected())sevenFalse++;
+                repeatDays.add(cb.isSelected());
+            }
+            if(sevenFalse==7){
+                repeatDays.clear();
+                for (int i = 0; i < 7; i++) {
+                    repeatDays.add(true);
+                }
             }
 
             String title = titleField.getText().isBlank() ? "鬧鐘" : titleField.getText();
             title += String.format(" (%02d:%02d:%02d)", h, m, s);
-            alarms.add(new AlarmItem(title, alarmTime));
+
+            alarms.add(new AlarmItem(title, h ,m ,s ,repeatDays,true));
             saveAlarmsToFile();
             showList();
         });
@@ -214,8 +240,52 @@ public class AlarmPane extends BorderPane {
         cancel.setOnAction(e -> showList());
 
         HBox buttons = new HBox(10, confirm, cancel);
-        form.getChildren().addAll(titleLabel, titleField, timeRow, buttons);
+        form.getChildren().addAll(titleLabel, titleField, timeRow,repeatRow, buttons);
 
         setCenter(form);
     }
+
+    //讀存檔邏輯
+    private final Gson gson = new GsonBuilder()
+        .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+        .setPrettyPrinting()
+        .create();
+
+    private final String FILE_PATH = "JsonData/alarms.json";
+
+    private void loadAlarmsFromFile() {
+        try {
+            var path = Paths.get(FILE_PATH);
+            if(!Files.exists(path)){
+                Files.createDirectories(path.getParent());
+                Files.writeString(path,"[]");
+            }
+
+            String json = Files.readString(path).trim();
+            if(json.isEmpty()) json = "[]";
+
+            Type listType = new TypeToken<List<AlarmItem>>() {}.getType();
+            List<AlarmItem> loaded = gson.fromJson(json, listType);
+            
+            alarms.clear();
+            if (loaded != null) alarms.setAll(loaded);
+        } catch (IOException e) {
+            System.out.println("無法載入鬧鐘檔案: " + e.getMessage());
+        } catch (JsonSyntaxException e) {
+        System.out.println("JSON 格式錯誤，可能檔案已損壞。");
+        e.printStackTrace();
+        }
+    }
+
+    private void saveAlarmsToFile() {
+        try{
+            String json = gson.toJson(alarms);
+            Files.createDirectories( Paths.get(FILE_PATH).getParent());
+            Files.writeString(Paths.get(FILE_PATH),json);
+        } catch (IOException e) {
+            System.out.println("無法儲存鬧鐘檔案: " + e.getMessage());
+        }
+    }
+
 }

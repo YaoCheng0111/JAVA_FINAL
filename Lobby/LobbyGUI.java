@@ -58,10 +58,15 @@ public class LobbyGUI extends Application {
             mainStage.show();
 
         });
-        downButton = createDirectionButton("↓", "你點擊了下方按鈕");
-        leftButton = createDirectionButton("←", "你點擊了左方按鈕");
-        rightButton = createDirectionButton("→", "你點擊了右方按鈕");
 
+        downButton = createDirectionButton("鬧鐘/計時器", e->{
+            TimerApp timerApp = new TimerApp();
+            Stage newStage = new Stage();
+            timerApp.start(newStage);
+        });
+        
+        leftButton = createDirectionButton("←",e->showAlert("你點擊了左方按鈕"));
+        rightButton = createDirectionButton("→",e->showAlert ("你點擊了右方按鈕"));
         upButton.setPrefSize(200, 50);
         downButton.setPrefSize(200, 50);
         leftButton.setPrefSize(50, 200);
@@ -87,19 +92,13 @@ public class LobbyGUI extends Application {
         primaryStage.show();
     }
 
-    private Button createDirectionButton(String label, String message) {
-        Button button = new Button(label);
-        button.setVisible(false);
-        button.setOnAction(e -> showAlert(message));
-        return button;
-    }
-
     private Button createDirectionButton(String label, EventHandler<ActionEvent> handler) {
         Button button = new Button(label);
         button.setVisible(false);
         button.setOnAction(handler);
         return button;
     }
+
 
     private void toggleButtonsVisibility() {
         boolean showing = upButton.isVisible();

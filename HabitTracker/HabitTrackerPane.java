@@ -208,13 +208,8 @@ public class HabitTrackerPane extends BorderPane {
         tableGrid.add(statusTitle, 0, statusRow);
 
         for (int col = 0; col < 7; col++) {
-            boolean allChecked = true;
-            for (Habit habit : habits) {
-                if (!habit.isChecked(col)) {
-                    allChecked = false;
-                    break;
-                }
-            }
+            boolean allChecked = habitManager.isPerfectClockIn(col);
+            
             Label status = new Label(allChecked ? "O" : "");
             status.setFont(Font.font(14));
             status.setPrefWidth(40);

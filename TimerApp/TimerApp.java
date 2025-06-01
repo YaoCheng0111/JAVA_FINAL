@@ -1,14 +1,12 @@
 package myPackage;
 
-import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 
-public class TimerApp extends Application {
-    @Override
-    public void start(Stage primaryStage) {
+public class TimerApp{
+    public void start(Stage stage) {
         TabPane tabPane = new TabPane();
 
         Tab alarmTab = new Tab("鬧鐘");
@@ -23,12 +21,8 @@ public class TimerApp extends Application {
 
         Scene scene = new Scene(tabPane, 560, 350);
         scene.getStylesheets().add(getClass().getResource("css/TimerStyle.css").toExternalForm()); // 加入CSS
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("鬧鐘 & 計時器");
-        primaryStage.show();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
+        stage.setScene(scene);
+        stage.setTitle("鬧鐘 & 計時器");
+        stage.show();
     }
 }
