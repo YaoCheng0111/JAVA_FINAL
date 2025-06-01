@@ -1,6 +1,8 @@
 package myPackage;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -24,7 +26,7 @@ public class AlarmItem {
         return title;
     }
 
-    public LocalDateTime getAlarTime(){
+    public LocalDateTime getAlarmTime(){
         return alarmTime;
     }
 
@@ -48,19 +50,23 @@ public class AlarmItem {
         this.repeatDays = repeatDays;
     }
 
-    public void setIsActive(Boolean isActive){
-        this.isActive = isActive;
+    public void setActive(){
+        isActive = !isActive;
     }
 
-    // 重新設定鬧鐘時間（例如：設定成明天同一時間）
-    public void restart() {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime newAlarmTime = alarmTime.withYear(now.getYear())
-                                              .withMonth(now.getMonthValue())
-                                              .withDayOfMonth(now.getDayOfMonth());
-        if (!newAlarmTime.isAfter(now)) {
-            newAlarmTime = newAlarmTime.plusDays(1);
+    //不可能有bug
+    public String getRemainingTime() {
+        if(!isActive){
+            return "未啟用";
         }
-        alarmTime = newAlarmTime;
+        
+        LocalDate today = LocalDate.now();
+        int todayOfWeek = today.getDayOfWeek().getValue() % 7;
+        if(!repeatDays.get(todayOfWeek)) return "非重複星期";
+
+        long secs = ChronoUnit.SECONDS.between(LocalDateTime.now(), alarmTime);
+        if (secs <= 0) return "今日鬧鐘已過";
+        return String.format("%02d:%02d:%02d", secs / 3600, (secs % 3600) / 60, secs % 60);
     }
+
 }

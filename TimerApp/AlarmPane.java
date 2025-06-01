@@ -19,7 +19,10 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.text.html.ListView;
 
 
 public class AlarmPane extends BorderPane {
@@ -31,9 +34,9 @@ public class AlarmPane extends BorderPane {
         listView.setCellFactory(list -> new ListCell<>() {
             private final Label titleLabel = new Label();
             private final Label timeLabel = new Label();
-            private final Button restartBtn = new Button("重新開始");
+            private final Button activeBtn = new Button("啟用/關閉");
             private final Button deleteBtn = new Button("刪除");
-            private final HBox buttonsBox = new HBox(10, restartBtn, deleteBtn);
+            private final HBox buttonsBox = new HBox(10, activeBtn, deleteBtn);
             private final VBox card = new VBox(5, titleLabel, timeLabel);
             private AlarmItem currentAlarm;
             private Timeline updateTimeline;
@@ -58,9 +61,9 @@ public class AlarmPane extends BorderPane {
                     e.consume();
                 });
 
-                restartBtn.setOnAction(e -> {
+                activeBtn.setOnAction(e -> {
                     if (currentAlarm != null) {
-                        currentAlarm.restart();
+                        currentAlarm.setActive();
                         updateTimeLabel();
                     }
                 });
@@ -76,12 +79,15 @@ public class AlarmPane extends BorderPane {
                 });
             }
 
+            //不可能
             private void updateTimeLabel() {
                 if (currentAlarm != null) {
-                    timeLabel.setText(getRemainingTime(currentAlarm.alarmTime));
+                    timeLabel.setText(currentAlarm.getRemainingTime());
                 }
             }
 
+
+            //應該不會
             @Override
             protected void updateItem(Object item, boolean empty) {
                 super.updateItem(item, empty);
@@ -100,7 +106,7 @@ public class AlarmPane extends BorderPane {
                     setGraphic(addButton);
                 } else if (item instanceof AlarmItem alarm) {
                     currentAlarm = alarm;
-                    titleLabel.setText(alarm.title);
+                    titleLabel.setText(String.format("%s (%s)",currentAlarm.getTitle(),currentAlarm.getIsActive()?"啟用":"關閉"));
                     updateTimeLabel();
 
                     showingDetails = false;
@@ -118,7 +124,100 @@ public class AlarmPane extends BorderPane {
         showList();
     }
 
-    // GSON相關
+    //應該不會
+    private void showList() {
+        ObservableList<Object> displayItems = FXCollections.observableArrayList();
+        displayItems.add("ADD_NEW");
+        displayItems.addAll(alarms);
+        listView.setItems(displayItems);
+        setCenter(listView);
+    }
+
+
+    //新增頁面
+    private void showAddForm() {
+        //UI
+        VBox form = new VBox(10);
+        form.setPadding(new Insets(20));
+
+        //title
+        Label titleLabel = new Label("新增鬧鐘");
+        titleLabel.getStyleClass().add("title-label");
+
+        TextField titleField = new TextField();
+        titleField.setPromptText("鬧鐘主題 (預設：鬧鐘)");
+
+        //alarmTime
+        ComboBox<Integer> hourBox = new ComboBox<>();
+        ComboBox<Integer> minBox = new ComboBox<>();
+        ComboBox<Integer> secBox = new ComboBox<>();
+
+        for (int i = 0; i < 60; i++) {
+            if (i < 24) hourBox.getItems().add(i);
+            minBox.getItems().add(i);
+            secBox.getItems().add(i);
+        }
+
+        hourBox.setValue(0);
+        minBox.setValue(0);
+        secBox.setValue(0);
+
+        HBox timeRow = new HBox(10,
+                new Label("hr:"), hourBox,
+                new Label("min:"), minBox,
+                new Label("sec:"), secBox
+        );
+
+        // repeatDays 
+        Label repeatLabel = new Label("重複星期：");
+        String[] dayNames = {"日", "一", "二", "三", "四", "五", "六"};
+        List<CheckBox> dayCheckboxes = new ArrayList<>();
+        for (String name : dayNames) {
+            dayCheckboxes.add(new CheckBox(name));
+        }
+        HBox repeatRow = new HBox(10);
+        repeatRow.getChildren().addAll(repeatLabel);
+        repeatRow.getChildren().addAll(dayCheckboxes);
+
+        Button confirm = new Button("新增");
+        Button cancel = new Button("取消");
+        cancel.getStyleClass().add("cancel-button");
+
+        confirm.setOnAction(e -> {
+            int h = hourBox.getValue();
+            int m = minBox.getValue();
+            int s = secBox.getValue();
+
+            LocalDateTime alarmTime = LocalDateTime.now()
+                    .withHour(h).withMinute(m).withSecond(s).withNano(0);
+
+            if (alarmTime.isBefore(LocalDateTime.now())) {
+                alarmTime = alarmTime.plusDays(1);
+            }
+
+            // 轉換 checkbox 勾選狀態成 repeatDays (boolean list)
+            List<Boolean> repeatDays = new ArrayList<>();
+            for (CheckBox cb : dayCheckboxes) {
+                repeatDays.add(cb.isSelected());
+            }
+
+            String title = titleField.getText().isBlank() ? "鬧鐘" : titleField.getText();
+            title += String.format(" (%02d:%02d:%02d)", h, m, s);
+
+            alarms.add(new AlarmItem(title, alarmTime,repeatDays,true));
+            saveAlarmsToFile();
+            showList();
+        });
+
+        cancel.setOnAction(e -> showList());
+
+        HBox buttons = new HBox(10, confirm, cancel);
+        form.getChildren().addAll(titleLabel, titleField, timeRow, buttons);
+
+        setCenter(form);
+    }
+
+    
     private final Gson gson = new GsonBuilder()
         .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
         .setPrettyPrinting()
@@ -144,78 +243,4 @@ public class AlarmPane extends BorderPane {
         }
     }
 
-    private String getRemainingTime(LocalDateTime alarmTime) {
-        long secs = ChronoUnit.SECONDS.between(LocalDateTime.now(), alarmTime);
-        if (secs <= 0) return "時間到";
-        return String.format("%02d:%02d:%02d", secs / 3600, (secs % 3600) / 60, secs % 60);
-    }
-
-    private void showList() {
-        ObservableList<Object> displayItems = FXCollections.observableArrayList();
-        displayItems.add("ADD_NEW");
-        displayItems.addAll(alarms);
-        listView.setItems(displayItems);
-        setCenter(listView);
-    }
-
-    private void showAddForm() {
-        VBox form = new VBox(10);
-        form.setPadding(new Insets(20));
-
-        Label titleLabel = new Label("新增鬧鐘");
-        titleLabel.getStyleClass().add("title-label");
-
-        TextField titleField = new TextField();
-        titleField.setPromptText("鬧鐘主題 (預設：鬧鐘)");
-
-        ComboBox<Integer> hourBox = new ComboBox<>();
-        ComboBox<Integer> minBox = new ComboBox<>();
-        ComboBox<Integer> secBox = new ComboBox<>();
-
-        for (int i = 0; i < 60; i++) {
-            if (i < 24) hourBox.getItems().add(i);
-            minBox.getItems().add(i);
-            secBox.getItems().add(i);
-        }
-
-        hourBox.setValue(0);
-        minBox.setValue(0);
-        secBox.setValue(0);
-
-        HBox timeRow = new HBox(10,
-                new Label("hr:"), hourBox,
-                new Label("min:"), minBox,
-                new Label("sec:"), secBox
-        );
-
-        Button confirm = new Button("新增");
-        Button cancel = new Button("取消");
-        cancel.getStyleClass().add("cancel-button");
-
-        confirm.setOnAction(e -> {
-            int h = hourBox.getValue();
-            int m = minBox.getValue();
-            int s = secBox.getValue();
-
-            LocalDateTime alarmTime = LocalDateTime.now()
-                    .withHour(h).withMinute(m).withSecond(s).withNano(0);
-
-            if (alarmTime.isBefore(LocalDateTime.now())) {
-                alarmTime = alarmTime.plusDays(1);
-            }
-
-            String title = titleField.getText().isBlank() ? "鬧鐘" : titleField.getText();
-            title += String.format(" (%02d:%02d:%02d)", h, m, s);
-            alarms.add(new AlarmItem(title, alarmTime));
-            saveAlarmsToFile();
-            showList();
-        });
-
-        cancel.setOnAction(e -> showList());
-
-        HBox buttons = new HBox(10, confirm, cancel);
-        form.getChildren().addAll(titleLabel, titleField, timeRow, buttons);
-
-        setCenter(form);
-    }
 }
