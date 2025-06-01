@@ -8,65 +8,59 @@ import java.util.ArrayList;
 
 public class AlarmItem {
     private String title;
-    private LocalDateTime alarmTime;
+    private int hour,minute,second;
     private List<Boolean> repeatDays = new ArrayList<>();
     private Boolean isActive;
 
     public AlarmItem() {} // Gson 需要無參數建構子
 
-    public AlarmItem(String title, LocalDateTime alarmTime,List<Boolean> repeatDays,Boolean isActive) {
+    public AlarmItem(String title, int hour,int minute,int second,List<Boolean> repeatDays,Boolean isActive) {
         this.title = title;
-        this.alarmTime = alarmTime;
+        this.hour = hour;
+        this.minute = minute;
+        this.second = second;
         this.repeatDays = repeatDays;
         this.isActive = isActive;
     }
 
     //get set method
-    public String getTitle(){
-        return title;
-    }
+    public String getTitle(){return title;}
+    public int getHour(){return hour;}
+    public int getMinute(){return minute;}
+    public int getSecond(){return second;}
+    public List<Boolean> getRepeatDays(){return repeatDays;}
+    public Boolean getIsActive(){return isActive;}
 
-    public LocalDateTime getAlarmTime(){
-        return alarmTime;
+    public void setTitle(String title){this.title = title;}
+    public void setTime(int hour,int minute,int second){
+        this.hour = hour;
+        this.minute = minute;
+        this.second = second;
     }
-
-    public List<Boolean> getRepeatDays(){
-        return repeatDays;
-    }
-
-    public Boolean getIsActive(){
-        return isActive;
-    }
-
-    public void setTitle(String title){
-        this.title = title;
-    }
-
-    public void setAlarmTime(LocalDateTime alarmTime){
-        this.alarmTime = alarmTime;
-    }
-
-    public void setRepeatDays(List<Boolean> repeatDays){
-        this.repeatDays = repeatDays;
-    }
-
-    public void setActive(){
-        isActive = !isActive;
-    }
+    public void setRepeatDays(List<Boolean> repeatDays){this.repeatDays = repeatDays;}
+    public void setActive(){isActive = !isActive;}
 
     //不可能有bug
     public String getRemainingTime() {
-        if(!isActive){
-            return "未啟用";
+        if(!isActive)return "未啟用";
+
+        LocalDateTime now = LocalDateTime.now();
+        int todayOfWeek = now.getDayOfWeek().getValue() % 7;
+
+        for(int i=0;i<7;i++){
+            int checkDay = (todayOfWeek + i)%7;
+            if(repeatDays.get(checkDay)){
+                LocalDateTime nextTime = now.plusDays(i)
+                    .withHour(hour).withMinute(minute).withSecond(second).withNano(0);
+            
+                if(nextTime.isAfter(now)){
+                    long secs = ChronoUnit.SECONDS.between(now, nextTime);
+                    return String.format("%02d:%02d:%02d", secs / 3600, (secs % 3600) / 60, secs % 60);
+                }
+            }
         }
         
-        LocalDate today = LocalDate.now();
-        int todayOfWeek = today.getDayOfWeek().getValue() % 7;
-        if(!repeatDays.get(todayOfWeek)) return "非重複星期";
-
-        long secs = ChronoUnit.SECONDS.between(LocalDateTime.now(), alarmTime);
-        if (secs <= 0) return "今日鬧鐘已過";
-        return String.format("%02d:%02d:%02d", secs / 3600, (secs % 3600) / 60, secs % 60);
+        return "無符合的鬧鐘時間";
     }
 
 }

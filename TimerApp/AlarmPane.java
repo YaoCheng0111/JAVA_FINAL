@@ -2,7 +2,9 @@ package myPackage;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
@@ -17,13 +19,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.text.html.ListView;
-
 
 public class AlarmPane extends BorderPane {
 
@@ -82,6 +84,7 @@ public class AlarmPane extends BorderPane {
             //不可能
             private void updateTimeLabel() {
                 if (currentAlarm != null) {
+                    titleLabel.setText(String.format("%s (%s)",currentAlarm.getTitle(),currentAlarm.getIsActive()?"啟用":"關閉"));
                     timeLabel.setText(currentAlarm.getRemainingTime());
                 }
             }
@@ -188,23 +191,24 @@ public class AlarmPane extends BorderPane {
             int m = minBox.getValue();
             int s = secBox.getValue();
 
-            LocalDateTime alarmTime = LocalDateTime.now()
-                    .withHour(h).withMinute(m).withSecond(s).withNano(0);
-
-            if (alarmTime.isBefore(LocalDateTime.now())) {
-                alarmTime = alarmTime.plusDays(1);
-            }
-
             // 轉換 checkbox 勾選狀態成 repeatDays (boolean list)
             List<Boolean> repeatDays = new ArrayList<>();
+            int sevenFalse=0;
             for (CheckBox cb : dayCheckboxes) {
+                if(!cb.isSelected())sevenFalse++;
                 repeatDays.add(cb.isSelected());
+            }
+            if(sevenFalse==7){
+                repeatDays.clear();
+                for (int i = 0; i < 7; i++) {
+                    repeatDays.add(true);
+                }
             }
 
             String title = titleField.getText().isBlank() ? "鬧鐘" : titleField.getText();
             title += String.format(" (%02d:%02d:%02d)", h, m, s);
 
-            alarms.add(new AlarmItem(title, alarmTime,repeatDays,true));
+            alarms.add(new AlarmItem(title, h ,m ,s ,repeatDays,true));
             saveAlarmsToFile();
             showList();
         });
@@ -212,32 +216,47 @@ public class AlarmPane extends BorderPane {
         cancel.setOnAction(e -> showList());
 
         HBox buttons = new HBox(10, confirm, cancel);
-        form.getChildren().addAll(titleLabel, titleField, timeRow, buttons);
+        form.getChildren().addAll(titleLabel, titleField, timeRow,repeatRow, buttons);
 
         setCenter(form);
     }
 
     
     private final Gson gson = new GsonBuilder()
-        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
         .setPrettyPrinting()
         .create();
 
     private final String FILE_PATH = "JsonData/alarms.json";
 
     private void loadAlarmsFromFile() {
-        try (FileReader reader = new FileReader(FILE_PATH)) {
+        try {
+            var path = Paths.get(FILE_PATH);
+            if(!Files.exists(path)){
+                Files.createDirectories(path.getParent());
+                Files.writeString(path,"[]");
+            }
+
+            String json = Files.readString(path).trim();
+            if(json.isEmpty()) json = "[]";
+
             Type listType = new TypeToken<List<AlarmItem>>() {}.getType();
-            List<AlarmItem> loaded = gson.fromJson(reader, listType);
+            List<AlarmItem> loaded = gson.fromJson(json, listType);
+            
+            alarms.clear();
             if (loaded != null) alarms.setAll(loaded);
         } catch (IOException e) {
             System.out.println("無法載入鬧鐘檔案: " + e.getMessage());
+        } catch (JsonSyntaxException e) {
+        System.out.println("JSON 格式錯誤，可能檔案已損壞。");
+        e.printStackTrace();
         }
     }
 
     private void saveAlarmsToFile() {
-        try (FileWriter writer = new FileWriter(FILE_PATH)) {
-            gson.toJson(alarms, writer);
+        try{
+            String json = gson.toJson(alarms);
+            Files.createDirectories( Paths.get(FILE_PATH).getParent());
+            Files.writeString(Paths.get(FILE_PATH),json);
         } catch (IOException e) {
             System.out.println("無法儲存鬧鐘檔案: " + e.getMessage());
         }
