@@ -2,12 +2,19 @@ package myPackage;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class HabitManager {
@@ -137,8 +144,12 @@ public class HabitManager {
             }else{
                 this.habits = new ArrayList<>();
             }
+
+            this.habits = loaded;
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 }

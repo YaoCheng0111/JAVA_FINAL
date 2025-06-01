@@ -34,6 +34,19 @@ public class HabitTrackerPane extends BorderPane {
         titleLabel.setMaxWidth(Double.MAX_VALUE);
         titleLabel.setAlignment(Pos.CENTER);
         setTop(titleLabel);
+        // 新增週期選擇按鈕區塊
+        Label weekRangeLabel = new Label(weeklyManager.getFirsDateToString() +  " - " + weeklyManager.getLasDateToString());
+        weekRangeLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+
+        HBox weekSelector = new HBox(10, weekRangeLabel);
+        weekSelector.setAlignment(Pos.CENTER);
+        weekSelector.setPadding(new Insets(10));
+
+        // 用 VBox 包住標題與週期選擇器
+        VBox topBox = new VBox(5, titleLabel, weekSelector);
+        topBox.setAlignment(Pos.CENTER);
+        setTop(topBox);
+
         BorderPane.setAlignment(titleLabel, Pos.CENTER);
 
         tableGrid.setHgap(10);

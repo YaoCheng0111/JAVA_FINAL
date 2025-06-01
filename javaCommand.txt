@@ -1,7 +1,7 @@
 編譯: 
 javac -d out 資料夾名稱/*.java
 會用到的資料夾:
-store/*.java    Lobby/*.java    equipItemManager/*.java    HabitTracker/*.java    TimerApp/*.java
+store/*.java    Lobby/*.java   TimerApp/*.java  equipItemManager/*.java    HabitTracker/*.java    
 執行: 
 java -cp out myPackage.檔名
 

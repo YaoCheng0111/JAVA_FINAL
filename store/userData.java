@@ -1,53 +1,89 @@
 package myPackage;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.property.SimpleStringProperty;
+import java.beans.PropertyChangeListener; // 
+import java.beans.PropertyChangeSupport; //
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.prefs.Preferences;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-class UserData {
+public class UserData {
 
-    private int tokens;     //後端紀錄的tokens數
-    private HashSet<String> ownedItems;
+    private IntegerProperty tokens = new SimpleIntegerProperty();
+    private Set<String> purchasedItems = new HashSet<>();
     private String equippedItem;
-    private Preferences prefs;
+    private PropertyChangeSupport changes = new PropertyChangeSupport(this);
+    private List<Runnable> tokenListeners = new ArrayList<>();
+    private StringProperty equippedAccessory = new SimpleStringProperty("");
+    private Map<String, StoreItem> ownedAccessories = new HashMap<>();
 
-    public UserData(int initialTokens) {
-        this.tokens = initialTokens;
-        this.ownedItems = new HashSet<>();
-        this.prefs = Preferences.userNodeForPackage(UserData.class);
-        this.equippedItem = prefs.get("equippedItem", "oiia");
+    //private StringProperty equippedItem = new SimpleStringProperty();
+    public UserData(int tokens) {
+        this.tokens.set(tokens);
     }
 
     public int getTokens() {
-
-        return tokens;
-
-    }
-
-    public boolean purchaseItem(StoreItem item) {
-        if (tokens < item.getPrice()) {
-            return false; // 代幣不足，無法購買
-        }
-        tokens -= item.getPrice();
-        ownedItems.add(item.getName());
-        return true;
-    }
-
-    public boolean hasItem(String itemName) {
-        return ownedItems.contains(itemName);
+        return tokens.get();
     }
 
     public void addTokens(int amount) {
-        tokens += amount;
+        int oldTokens = tokens.get();
+        tokens.set(oldTokens + amount);
+        changes.firePropertyChange("tokens", oldTokens, tokens.get()); //  **確保 UI 更新**
     }
 
-    public void setEquippedItem(String itemName) {
-        if (hasItem(itemName)) {
-            this.equippedItem = itemName;
-            prefs.put("equippedItem", itemName); // 存入本地
+    public IntegerProperty tokensProperty() {
+        return tokens;
+    }
+
+    public boolean purchaseItem(StoreItem item) {
+        if (getTokens() >= item.getPrice()) {
+            purchasedItems.add(item.getName());
+            return true;
         }
+        return false;
+    }
+
+    public boolean hasItem(String itemName) {
+        return purchasedItems.contains(itemName);
     }
 
     public String getEquippedItem() {
         return equippedItem;
+    }
+
+    public void setEquippedItem(String name) {
+        equippedItem = name;
+    }
+
+    public String getEquippedAccessory() {
+        return equippedAccessory.get();
+    }
+
+    public void setEquippedAccessory(String name) {
+        equippedAccessory.set(name);
+    }
+
+    public StringProperty equippedAccessoryProperty() {
+        return equippedAccessory;
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        changes.addPropertyChangeListener(listener); //  **讓 UI 監聽代幣變化**
+    }
+
+    public void addOwnedAccessory(StoreItem item) {
+        ownedAccessories.put(item.getName(), item);
+    }
+
+    public StoreItem getEquippedAccessoryItem() {
+        String name = getEquippedAccessory();
+        return ownedAccessories.get(name);
     }
 }

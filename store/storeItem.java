@@ -1,19 +1,22 @@
 package myPackage;
 
-import javax.swing.*;
-import myPackage.equipItemManager;
-import myPackage.mainFrame;
+import javafx.scene.image.Image;
 
-class StoreItem {
+public class StoreItem {
 
     private String name;
     private int price;
-    private ImageIcon image; //  ImageIcon 
+    private String imagePath;
 
-    public StoreItem(String name, int price, String imagePath) {
+    private double offsetX;
+    private double offsetY;
+
+    public StoreItem(String name, int price, String imagePath, double offsetX, double offsetY) {
         this.name = name;
         this.price = price;
-        this.image = new ImageIcon(imagePath); //
+        this.imagePath = imagePath;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
     }
 
     public String getName() {
@@ -24,7 +27,15 @@ class StoreItem {
         return price;
     }
 
-    public ImageIcon getImage() {
-        return image;
+    public Image getJavaFXImage() {
+        return new Image("file:" + imagePath);
+    }
+
+    public double getOffsetX() {
+        return offsetX;
+    }
+
+    public double getOffsetY() {
+        return offsetY;
     }
 }

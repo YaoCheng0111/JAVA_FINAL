@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,6 +49,18 @@ public class WeeklyManager {
         for(int i=0;i<7;i++){
             thisWeek.add(thisSunday.plusDays(i)); 
         }
+    }
+
+    //列印當周第一天
+    public String getFirsDateToString(){ 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd");
+        return thisWeek.get(0).format(formatter);
+    }
+
+    //列印當周最後一天
+    public String getLasDateToString(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd");
+        return thisWeek.get(6).format(formatter);
     }
 
     //存檔
