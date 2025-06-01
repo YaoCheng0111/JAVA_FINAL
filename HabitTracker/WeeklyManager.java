@@ -16,7 +16,6 @@ public class WeeklyManager {
     private LocalDate today;
     private LocalDate thisSunday;
     private List<LocalDate> thisWeek = new ArrayList<>();
-    private List<List<LocalDate>> allWeeks = new ArrayList<>();
     private static final String FILE_NAME = "JsonData/week.json";
 
     //從json檔抓檔案
@@ -42,16 +41,9 @@ public class WeeklyManager {
         return thisWeek.get(6);
     }
 
-    private List<LocalDate> generateWeekStartingFrom(LocalDate sunday) {
-        List<LocalDate> week = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
-            week.add(sunday.plusDays(i));
-        }
-        return week;
-    }
 
     //設定成這周七天
-    private void setThisWeek(){
+    public void setThisWeek(){
         thisWeek.clear();
         for(int i=0;i<7;i++){
             thisWeek.add(thisSunday.plusDays(i)); 
@@ -61,11 +53,11 @@ public class WeeklyManager {
     //存檔
     public void saveWeek() {
         try (FileWriter writer = new FileWriter(FILE_NAME)) {
-            List<List<String>> raw = allWeeks.stream()
-                             .map(week -> week.stream().map(LocalDate::toString).collect(Collectors.toList()))
+            List<String> weekStrings = thisWeek.stream()
+                             .map(LocalDate::toString)
                              .collect(Collectors.toList());
             
-            new Gson().toJson(raw, writer);
+            new Gson().toJson(weekStrings, writer);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -74,38 +66,23 @@ public class WeeklyManager {
     //讀檔
     public void loadWeek() {
         try (FileReader reader = new FileReader(FILE_NAME)) {
-            Type listType = new TypeToken<List<List<String>>>() {}.getType();
-            List<List<String>> raw = new Gson().fromJson(reader, listType);
+            Type listType = new TypeToken <List<String>>() {}.getType();
+            List<String> loaded = new Gson().fromJson(reader, listType);
             
-            if (raw != null && !raw.isEmpty()) {
-                allWeeks = raw.stream()
-                                 .map(week -> week.stream().map(LocalDate::parse).collect(Collectors.toList())) 
-                                 .collect(Collectors.toList()); 
-                
-                List<LocalDate> lastSaveWeek = allWeeks.get(allWeeks.size()-1);
-                LocalDate lastSunday = lastSaveWeek.get(0);
-                
-                if(!lastSunday.equals(thisSunday)){
-                    newWeek = true;
-
-                    LocalDate nextSunday = lastSunday.plusWeeks(1);
-                    while(!nextSunday.isAfter(thisSunday)){
-                        allWeeks.add(generateWeekStartingFrom(nextSunday));
-                        nextSunday = nextSunday.plusWeeks(1);
-                    }
-
-                    thisWeek = generateWeekStartingFrom(nextSunday);
-                    allWeeks.add(thisWeek);
-
+            if (loaded != null && !loaded.isEmpty()) {
+                this.thisWeek = loaded.stream()Add commentMore actions
+                                 .map(LocalDate::parse) 
+                                 .collect(Collectors.toList());                
+                if(thisWeek.get(0).equals(thisSunday)){//同一周
+                    this.newWeek = false;
+                }else{//不同周
+                    this.newWeek = true;
+                    setThisWeek();
                     saveWeek();
-                }else{
-                    newWeek = false;
-                    thisWeek = lastSaveWeek;
                 }
             }else{//第一次生成
                 this.newWeek = true;
-                thisWeek = generateWeekStartingFrom(thisSunday);
-                allWeeks.add(thisWeek);
+                setThisWeek();
                 saveWeek();
             }
         } catch (Exception e) {
