@@ -1,6 +1,8 @@
 package myPackage;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -32,10 +34,14 @@ public class LobbyGUI extends Application {
         imageView.setFitWidth(200);
         imageView.setFitHeight(200);
 
-        upButton = createDirectionButton("↑", "你點擊了上方按鈕");
-        downButton = createDirectionButton("↓", "你點擊了下方按鈕");
-        leftButton = createDirectionButton("←", "你點擊了左方按鈕");
-        rightButton = createDirectionButton("→", "你點擊了右方按鈕");
+        upButton = createDirectionButton("↑", e->showAlert("你點擊了上方按鈕"));
+        downButton = createDirectionButton("鬧鐘/計時器", e->{
+            TimerApp timerApp = new TimerApp();
+            Stage newStage = new Stage();
+            timerApp.start(newStage);
+        });
+        leftButton = createDirectionButton("←",e->showAlert("你點擊了左方按鈕"));
+        rightButton = createDirectionButton("→",e->showAlert ("你點擊了右方按鈕"));
         upButton.setPrefSize(200, 50);
         downButton.setPrefSize(200, 50);
         leftButton.setPrefSize(50, 200);
@@ -62,10 +68,10 @@ public class LobbyGUI extends Application {
         primaryStage.show();
     }
 
-    private Button createDirectionButton(String label, String message) {
+    private Button createDirectionButton(String label, EventHandler<ActionEvent> handler) {
         Button button = new Button(label);
         button.setVisible(false);
-        button.setOnAction(e -> showAlert(message));
+        button.setOnAction(handler);
         return button;
     }
 

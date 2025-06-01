@@ -70,7 +70,7 @@ public class WeeklyManager {
             List<String> loaded = new Gson().fromJson(reader, listType);
             
             if (loaded != null && !loaded.isEmpty()) {
-                this.thisWeek = loaded.stream()Add commentMore actions
+                this.thisWeek = loaded.stream()
                                  .map(LocalDate::parse) 
                                  .collect(Collectors.toList());                
                 if(thisWeek.get(0).equals(thisSunday)){//同一周
