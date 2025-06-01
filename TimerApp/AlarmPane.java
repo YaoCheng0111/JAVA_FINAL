@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -22,6 +23,7 @@ import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -44,6 +46,7 @@ public class AlarmPane extends BorderPane {
             private Timeline updateTimeline;
             private boolean showingDetails = false;
 
+            //listview裡面的UI
             {
                 setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
                 card.setPadding(new Insets(10));
@@ -67,6 +70,7 @@ public class AlarmPane extends BorderPane {
                     if (currentAlarm != null) {
                         currentAlarm.setActive();
                         updateTimeLabel();
+                        saveAlarmsToFile();
                     }
                 });
 
@@ -81,7 +85,7 @@ public class AlarmPane extends BorderPane {
                 });
             }
 
-            //不可能
+            //更新alarmItem的title and time label
             private void updateTimeLabel() {
                 if (currentAlarm != null) {
                     titleLabel.setText(String.format("%s (%s)",currentAlarm.getTitle(),currentAlarm.getIsActive()?"啟用":"關閉"));
@@ -90,7 +94,7 @@ public class AlarmPane extends BorderPane {
             }
 
 
-            //應該不會
+            //偵測是哪種object來顯示list
             @Override
             protected void updateItem(Object item, boolean empty) {
                 super.updateItem(item, empty);
@@ -125,9 +129,14 @@ public class AlarmPane extends BorderPane {
         });
 
         showList();
+
+        //每秒鐘檢查是否要跳通知
+        Timeline checkTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> checkAlarms()));
+        checkTimeline.setCycleCount(Timeline.INDEFINITE);
+        checkTimeline.play();
     }
 
-    //應該不會
+    //把各個list物件裝進observablelist最後做輸出
     private void showList() {
         ObservableList<Object> displayItems = FXCollections.observableArrayList();
         displayItems.add("ADD_NEW");
@@ -136,6 +145,21 @@ public class AlarmPane extends BorderPane {
         setCenter(listView);
     }
 
+    //檢查要不要響
+    private void checkAlarms() {
+        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        for (AlarmItem alarm : alarms) {
+            if (alarm.shouldTrigger(now)) {
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("鬧鐘通知");
+                    alert.setHeaderText(null);
+                    alert.setContentText(alarm.getTitle() + " 時間到！");
+                    alert.show();
+                });
+            }
+        }
+    }
 
     //新增頁面
     private void showAddForm() {
@@ -221,8 +245,10 @@ public class AlarmPane extends BorderPane {
         setCenter(form);
     }
 
-    
+    //讀存檔邏輯
     private final Gson gson = new GsonBuilder()
+        .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
         .setPrettyPrinting()
         .create();
 

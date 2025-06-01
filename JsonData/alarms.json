@@ -1,1 +1,36 @@
-[]
+[
+  {
+    "title": "鬧鐘 (16:19:30)",
+    "hour": 16,
+    "minute": 19,
+    "second": 30,
+    "repeatDays": [
+      true,
+      false,
+      false,
+      false,
+      true,
+      false,
+      false
+    ],
+    "isActive": true,
+    "lastTriggerDate": "2025-06-01"
+  },
+  {
+    "title": "鬧鐘 (16:21:00)",
+    "hour": 16,
+    "minute": 21,
+    "second": 0,
+    "repeatDays": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "isActive": true,
+    "lastTriggerDate": "2025-06-01"
+  }
+]
