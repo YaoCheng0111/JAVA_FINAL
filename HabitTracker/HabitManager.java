@@ -79,6 +79,9 @@ public class HabitManager {
 
     //當日是否為完美打卡
     public Boolean isPerfectClockIn(int dayIndex){
+        if(habits.isEmpty()){
+            return false;
+        }
         for(Habit h:habits){
             if(!h.isChecked(dayIndex)){
                 return false;
