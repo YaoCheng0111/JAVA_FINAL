@@ -35,12 +35,10 @@ public class HabitTrackerPane extends BorderPane {
         titleLabel.setAlignment(Pos.CENTER);
         setTop(titleLabel);
         // 新增週期選擇按鈕區塊
-        Button prevWeekButton = new Button("<");
-        Button nextWeekButton = new Button(">");
         Label weekRangeLabel = new Label(weeklyManager.getFirsDateToString() +  " - " + weeklyManager.getLasDateToString());
         weekRangeLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
 
-        HBox weekSelector = new HBox(10, prevWeekButton, weekRangeLabel, nextWeekButton);
+        HBox weekSelector = new HBox(10, weekRangeLabel);
         weekSelector.setAlignment(Pos.CENTER);
         weekSelector.setPadding(new Insets(10));
 
@@ -104,7 +102,7 @@ public class HabitTrackerPane extends BorderPane {
             dialog.showAndWait().ifPresent(name -> {
                 if (!name.trim().isEmpty()) {
                     habitManager.addHabit(new Habit(name.trim()));
-                    habitManager.saveHabits(0);
+                    habitManager.saveHabits();
                     refreshTable();
                 }
             });
@@ -123,7 +121,7 @@ public class HabitTrackerPane extends BorderPane {
             dialog.setContentText("Select habit to delete:");
             dialog.showAndWait().ifPresent(name -> {
                 habitManager.removeHabit(name);
-                habitManager.saveHabits(0);
+                habitManager.saveHabits();
                 refreshTable();
             });
         });
@@ -178,7 +176,7 @@ public class HabitTrackerPane extends BorderPane {
                         showAlert(habit.getName() + " 今天已經打卡過了！");
                     } else {
                         habitManager.toggleCheckIn(r, c);
-                        habitManager.saveHabits(0);
+                        habitManager.saveHabits();
                         refreshTable();
                         showAlert("打卡成功！");
                     }

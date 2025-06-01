@@ -23,7 +23,7 @@ public class HabitManager {
 
     //從json檔抓檔案
     public HabitManager() {
-        loadHabits(0);
+        loadHabits();
     }
 
     //add habit to list
@@ -145,7 +145,7 @@ public class HabitManager {
                 this.habits = new ArrayList<>();
             }
 
-            this.habits = loadedHabits;
+            this.habits = loaded;
 
         } catch (Exception e) {
             e.printStackTrace();
