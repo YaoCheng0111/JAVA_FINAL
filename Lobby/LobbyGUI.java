@@ -5,6 +5,8 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -13,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.scene.layout.Pane;
@@ -31,6 +34,9 @@ public class LobbyGUI extends Application {
 
     private double xOffset = 0;
     private double yOffset = 0;
+    private double dragStartX, dragStartY;
+    private boolean dragged = false;
+
 
     public static void main(String[] args) {
         launch(args);
@@ -106,11 +112,35 @@ public class LobbyGUI extends Application {
             primaryStage.setY(event.getScreenY() - yOffset);
         });
 
+        imageView.setOnMousePressed(e -> {
+            dragStartX = e.getSceneX() - imageView.getLayoutX();
+            dragStartY = e.getSceneY() - imageView.getLayoutY();
+            dragged = true;
+        });
+
+        imageView.setOnMouseDragged(e -> {
+            imageView.setLayoutX(e.getSceneX() - dragStartX);
+            imageView.setLayoutY(e.getSceneY() - dragStartY);
+            dragged = false;
+        });
+
+        imageView.setOnMouseReleased(e -> {
+            if (!dragged) {
+                toggleButtonsVisibility();
+            }
+        });
+
         scene.getStylesheets().add(getClass().getResource("css/Lobbystyle.css").toExternalForm());
         primaryStage.setTitle("Lobby GUI");
         primaryStage.setScene(scene);
         primaryStage.setAlwaysOnTop(true);
         primaryStage.show();
+
+        Screen screen = Screen.getPrimary(); 
+        Rectangle2D bounds = screen.getVisualBounds(); 
+
+        primaryStage.setX(bounds.getMaxX() - primaryStage.getWidth());
+        primaryStage.setY(bounds.getMaxY() - primaryStage.getHeight());
     }
 
     private Button createDirectionButton(String label, EventHandler<ActionEvent> handler) {
