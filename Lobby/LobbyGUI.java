@@ -15,7 +15,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-
 import javafx.scene.layout.Pane;
 
 public class LobbyGUI extends Application {
@@ -110,6 +109,7 @@ public class LobbyGUI extends Application {
         scene.getStylesheets().add(getClass().getResource("css/Lobbystyle.css").toExternalForm());
         primaryStage.setTitle("Lobby GUI");
         primaryStage.setScene(scene);
+        primaryStage.setAlwaysOnTop(true);
         primaryStage.show();
     }
 
