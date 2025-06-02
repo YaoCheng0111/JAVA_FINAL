@@ -22,3 +22,9 @@ git push origin timer
 git add .
 git commit -m "窩~汁~能~"
 git push origin 資料夾名稱
+
+
+新的編譯與執行指令(我加了一些jar檔)
+
+javac -cp "lib/*;gson-2.10.1.jar;jackson-core-2.15.2.jar;jackson-annotations-2.15.2.jar;jackson-databind-2.15.2.jar" --module-path "javafx-sdk-21.0.7/lib" --add-modules javafx.controls,javafx.fxml -d out store/*.java Lobby/*.java equipItemManager/*.java TimerApp/*.java
+java --module-path "javafx-sdk-21.0.7/lib" --add-modules javafx.controls,javafx.fxml -cp "out;lib/*;gson-2.10.1.jar" myPackage.LobbyGUI
