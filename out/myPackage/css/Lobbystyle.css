@@ -1,6 +1,6 @@
 /* 整個畫面背景色 */
 .root {
-    -fx-background-color: #f0f0f5;
+    -fx-background-color: transparent;
 }
 
 /* 所有方向按鈕的基本樣式 */

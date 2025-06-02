@@ -12,7 +12,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import javafx.scene.layout.Pane;
 
@@ -28,12 +30,17 @@ public class LobbyGUI extends Application {
     private TokenPane tokenPane;
     private ImageView accessoryImageView;
 
+    private double xOffset = 0;
+    private double yOffset = 0;
+
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) {
+
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
 
         userData = new UserData(100);
         tokenPane = new TokenPane(userData);
@@ -86,6 +93,20 @@ public class LobbyGUI extends Application {
         imageView.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> toggleButtonsVisibility());
 
         Scene scene = new Scene(root, 400, 400);
+
+        scene.setFill(Color.TRANSPARENT);
+        root.setStyle("-fx-background-color: transparent;");
+
+        scene.setOnMousePressed(event -> {
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        });
+        
+        scene.setOnMouseDragged(event -> {
+            primaryStage.setX(event.getScreenX() - xOffset);
+            primaryStage.setY(event.getScreenY() - yOffset);
+        });
+
         scene.getStylesheets().add(getClass().getResource("css/Lobbystyle.css").toExternalForm());
         primaryStage.setTitle("Lobby GUI");
         primaryStage.setScene(scene);
