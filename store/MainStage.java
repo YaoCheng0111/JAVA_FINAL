@@ -49,7 +49,7 @@ public class MainStage extends Stage {
 
         // 把 tokenPane 加入場景
         Scene scene = new Scene(root, 800, 600); //  正確設定 Scene
-        scene.getStylesheets().add(getClass().getResource("css/storeStyle.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/css/storeStyle.css").toExternalForm());
         setScene(scene);
         show();
     }

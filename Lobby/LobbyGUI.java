@@ -50,7 +50,7 @@ public class LobbyGUI extends Application {
         userData = new UserData(100);
         tokenPane = new TokenPane(userData);
 
-        imageView = new ImageView(new Image("file:source/stand_cat.png"));
+        imageView = new ImageView(new Image("file:Resource/images/stand_cat.png"));
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(200);
         imageView.setFitHeight(200);
@@ -130,7 +130,7 @@ public class LobbyGUI extends Application {
             }
         });
 
-        scene.getStylesheets().add(getClass().getResource("css/Lobbystyle.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/css/Lobbystyle.css").toExternalForm());
         primaryStage.setTitle("Lobby GUI");
         primaryStage.setScene(scene);
         primaryStage.setAlwaysOnTop(true);
@@ -178,7 +178,7 @@ public class LobbyGUI extends Application {
     public void updateImage() {
         String equipped = userData.getEquippedItem();
         if (equipped != null) {
-            Image image = new Image("file:source/" + equipped + ".png");
+            Image image = new Image("Resource/images/" + equipped + ".png");
             imageView.setImage(image);
         }
 
@@ -187,20 +187,20 @@ public class LobbyGUI extends Application {
         StoreItem accessoryItem = userData.getEquippedAccessoryItem();
         if (accessory != null && !accessory.isEmpty()) {        //
             if (accessory.equals("tie")) {
-                accessoryImageView.setImage(new Image("file:source/tie_equip.png"));
+                accessoryImageView.setImage(new Image("Resource/images//tie_equip.png"));
                 accessoryImageView.setFitWidth(100);
                 accessoryImageView.setFitHeight(100);
             } else if (accessory.equals("necklace")) {
-                accessoryImageView.setImage(new Image("file:source/necklace2.png"));
+                accessoryImageView.setImage(new Image("Resource/images/necklace2.png"));
                 accessoryImageView.setFitWidth(80);
                 accessoryImageView.setFitHeight(80);
 
             } else if (accessory.equals("gold_necklace")) {
-                accessoryImageView.setImage(new Image("file:source/" + accessory + ".png"));
+                accessoryImageView.setImage(new Image("Resource/images/" + accessory + ".png"));
                 accessoryImageView.setFitWidth(80);
                 accessoryImageView.setFitHeight(80);
             } else {
-                accessoryImageView.setImage(new Image("file:source/" + accessory + ".png"));
+                accessoryImageView.setImage(new Image("Resource/images/" + accessory + ".png"));
                 accessoryImageView.setFitWidth(100);
                 accessoryImageView.setFitHeight(100);
             }

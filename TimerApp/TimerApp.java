@@ -20,7 +20,7 @@ public class TimerApp{
         tabPane.getTabs().addAll(alarmTab, timerTab);
 
         Scene scene = new Scene(tabPane, 560, 350);
-        scene.getStylesheets().add(getClass().getResource("css/TimerStyle.css").toExternalForm()); // 加入CSS
+        scene.getStylesheets().add(getClass().getResource("/css/TimerStyle.css").toExternalForm()); // 加入CSS
         stage.setScene(scene);
         stage.setTitle("鬧鐘 & 計時器");
         stage.show();

@@ -1,7 +1,7 @@
 {
-  "tokens" : 100,
-  "equippedItem" : "stand_cat",
+  "tokens" : 0,
+  "equippedItem" : "red_cat",
   "equippedAccessory" : "",
-  "purchasedItems" : [ "stand_cat" ],
+  "purchasedItems" : [ "RGB_cat", "red_cat", "stand_cat" ],
   "ownedAccessories" : [ ]
 }

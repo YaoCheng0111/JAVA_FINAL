@@ -28,7 +28,7 @@ public class StoreItem {
     }
 
     public Image getJavaFXImage() {
-        return new Image("file:" + imagePath);
+        return new Image(imagePath);
     }
 
     public double getOffsetX() {

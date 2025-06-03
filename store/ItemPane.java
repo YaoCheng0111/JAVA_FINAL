@@ -26,12 +26,12 @@ public class ItemPane extends GridPane {
         this.lobbyGUI = lobbyGUI;
         items = new ArrayList<>();
 
-        items.add(new StoreItem("stand_cat", 0, "source/stand_cat.png", 100, 100));
-        items.add(new StoreItem("new_cat", 50, "source/new_cat.png", 100, 100));
-        items.add(new StoreItem("red_cat", 50, "source/red_cat.png", 100, 100));
-        items.add(new StoreItem("rainbow_cat", 50, "source/rainbow_cat.png", 100, 100));
-        items.add(new StoreItem("RGB_cat", 50, "source/RGB_cat.png", 100, 100));
-        items.add(new StoreItem("RGB2_cat", 50, "source/RGB2_cat.png", 100, 100));
+        items.add(new StoreItem("stand_cat", 0, "Resource/images/stand_cat.png", 100, 100));
+        items.add(new StoreItem("new_cat", 50, "Resource/images/new_cat.png", 100, 100));
+        items.add(new StoreItem("red_cat", 50, "Resource/images/red_cat.png", 100, 100));
+        items.add(new StoreItem("rainbow_cat", 50, "Resource/images/rainbow_cat.png", 100, 100));
+        items.add(new StoreItem("RGB_cat", 50, "Resource/images/RGB_cat.png", 100, 100));
+        items.add(new StoreItem("RGB2_cat", 50, "Resource/images/RGB2_cat.png", 100, 100));
 
         String equippedName = userData.getEquippedItem();
         for (StoreItem item : items) {
