@@ -172,7 +172,7 @@ public class UserData {
             ObjectNode accNode = mapper.createObjectNode();
             accNode.put("name", item.getName());
             accNode.put("price", item.getPrice());
-            accNode.put("imagePath", item.getJavaFXImage().getUrl().replace("file:", ""));
+            accNode.put("imagePath", item.getImagePath());
             accNode.put("offsetX", item.getOffsetX());
             accNode.put("offsetY", item.getOffsetY());
             accessoriesArray.add(accNode);
