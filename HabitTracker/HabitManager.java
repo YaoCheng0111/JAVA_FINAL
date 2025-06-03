@@ -132,7 +132,7 @@ public class HabitManager {
 
     //讀檔
     public void loadHabits() {
-        try (FileReader reader = new FileReader(FILE_NAME)) {
+        try (FileReader reader = new FileReader(FILE_NAME)) {            
             Type listType = new TypeToken<List<Habit>>() {
             }.getType();
             List<Habit> loaded = new Gson().fromJson(reader, listType);
@@ -143,11 +143,10 @@ public class HabitManager {
                 this.habits = loaded;
             }else{
                 this.habits = new ArrayList<>();
+                saveHabits();
             }
 
-            this.habits = loaded;
-
-        } catch (Exception e) {
+        } catch (Exception e) {            
             e.printStackTrace();
         }
     }

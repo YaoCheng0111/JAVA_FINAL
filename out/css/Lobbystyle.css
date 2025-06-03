@@ -25,3 +25,11 @@
     -fx-background-color: #2196F3;
     -fx-text-fill: white;
 }
+
+.ShutDown-Button{
+    -fx-background-color: #ff4c4c;
+}
+
+.ShutDown-Button:hover{
+    -fx-background-color: #ff0000;
+}

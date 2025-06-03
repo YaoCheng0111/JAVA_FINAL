@@ -1,25 +1,7 @@
 {
-  "tokens" : 10,
-  "equippedItem" : "red_cat",
-  "equippedAccessory" : "tie",
-  "purchasedItems" : [ "RGB_cat", "tie", "red_cat", "new_cat", "stand_cat", "rainbow_cat", "hat", "necklace" ],
-  "ownedAccessories" : [ {
-    "name" : "tie",
-    "price" : 10,
-    "imagePath" : "Resource/images/tie.png",
-    "offsetX" : 143.0,
-    "offsetY" : 173.0
-  }, {
-    "name" : "hat",
-    "price" : 10,
-    "imagePath" : "Resource/images/hat.png",
-    "offsetX" : 137.0,
-    "offsetY" : 82.0
-  }, {
-    "name" : "necklace",
-    "price" : 10,
-    "imagePath" : "Resource/images/necklace.png",
-    "offsetX" : 153.0,
-    "offsetY" : 160.0
-  } ]
+  "tokens" : 100,
+  "equippedItem" : "stand_cat",
+  "equippedAccessory" : "",
+  "purchasedItems" : [ "stand_cat" ],
+  "ownedAccessories" : [ ]
 }

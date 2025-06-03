@@ -25,14 +25,14 @@ public class AccessoryPane extends GridPane {
         this.lobbyGUI = lobbyGUI;
         this.accessories = new ArrayList<>();
 
-        accessories.add(new StoreItem("sunglasses", 10, "Resource/images/sunglasses.png", 141, 115));
-        accessories.add(new StoreItem("hat", 10, "Resource/images/hat.png", 137, 82));
-        accessories.add(new StoreItem("necklace", 10, "Resource/images/necklace.png", 153, 160));
-        accessories.add(new StoreItem("tie", 10, "Resource/images/tie.png", 143, 173));
-        accessories.add(new StoreItem("bobble_hat", 10, "Resource/images/bobble_hat.png", 144, 63));
-        accessories.add(new StoreItem("ball", 10, "Resource/images/ball.png", 70, 80));
-        accessories.add(new StoreItem("bat", 10, "Resource/images/bat.png", 115, 75));
-        accessories.add(new StoreItem("gold_necklace", 10, "Resource/images/gold_necklace.png", 155, 190));
+        accessories.add(new StoreItem("sunglasses", 10, "Resource/images/sunglasses.png", 40.5, 19.0));
+        accessories.add(new StoreItem("hat", 10, "Resource/images/hat.png", 40.5, -15.0));
+        accessories.add(new StoreItem("necklace", 10, "Resource/images/necklace.png", 51.5, 65.0));
+        accessories.add(new StoreItem("tie", 10, "Resource/images/tie.png", 42.5, 73.0));
+        accessories.add(new StoreItem("bobble_hat", 10, "Resource/images/bobble_hat.png", 67.0, -8.0));
+        accessories.add(new StoreItem("ball", 10, "Resource/images/ball.png", 5, 15));
+        accessories.add(new StoreItem("bat", 10, "Resource/images/bat.png", 15, 9));
+        accessories.add(new StoreItem("gold_necklace", 10, "Resource/images/gold_necklace.png", 55, 94));
 
         String equippedName = userData.getEquippedAccessory();
         if (equippedName != null) {
