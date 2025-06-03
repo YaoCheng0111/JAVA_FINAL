@@ -38,7 +38,7 @@ public class TimerPane extends BorderPane {
 
     private final ObservableList<TimerItem> timers = FXCollections.observableArrayList();
     private final ListView<Object> listView = new ListView<>();
-    private final AudioClip alarmSound = new AudioClip(getClass().getResource("/Resource/sound/timer_sound.wav").toString());
+    //private final AudioClip alarmSound = new AudioClip(getClass().getResource("/Resource/sound/timer_sound.wav").toString());
 
     public TimerPane() {
 
@@ -158,7 +158,7 @@ public class TimerPane extends BorderPane {
                                 alert.setHeaderText(null);
                                 alert.setContentText(currentTimer.getTitle() + " 時間到！");
                                 alert.show(); 
-                                alarmSound.play();
+                                //alarmSound.play();
                         }
                     });
 

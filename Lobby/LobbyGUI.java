@@ -18,6 +18,8 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+
+
 public class LobbyGUI extends Application {
 
     private Button Button_1;
@@ -72,7 +74,7 @@ public class LobbyGUI extends Application {
             mainStage.show();
         });
 
-        Button_2 = createDirectionButton("鬧鐘/計時器", e -> {
+        Button_2 = createDirectionButton("鬧鐘/計時器", e -> {            
             TimerApp timerApp = new TimerApp();
             Stage newStage = new Stage();
             timerApp.start(newStage);

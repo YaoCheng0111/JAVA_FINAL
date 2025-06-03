@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>C:\JAVA_FINAL\DesktopAssistant.jar</jar>
+  <outfile>C:\JAVA_FINAL\DesktopAssistant-ver2.0.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl></downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest></manifest>
+  <icon>C:\JAVA_FINAL\yong-chang-Ma.ico</icon>
+  <classPath>
+    <mainClass>myPackage.LobbyGUI</mainClass>
+    <cp>gson-2.10.1.jar</cp>
+    <cp>lib/jackson-annotations-2.15.2.jar</cp>
+    <cp>lib/jackson-core-2.15.2.jar</cp>
+    <cp>lib/jackson-databind-2.15.2.jar</cp>
+    <cp>DesktopAssistant.jar</cp>
+  </classPath>
+  <jre>
+    <path>%JAVA_HOME%;%PATH%</path>
+    <requiresJdk>true</requiresJdk>
+    <requires64Bit>false</requires64Bit>
+    <minVersion>17</minVersion>
+    <maxVersion></maxVersion>
+    <opt>--module-path javafx-sdk-21.0.7/lib --add-modules javafx.controls,javafx.fxml</opt>
+  </jre>
+</launch4jConfig>

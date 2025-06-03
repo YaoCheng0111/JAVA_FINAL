@@ -30,11 +30,14 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+
 public class AlarmPane extends BorderPane {
 
     private final ObservableList<AlarmItem> alarms = FXCollections.observableArrayList();
     private final ListView<Object> listView = new ListView<>();
-    private final AudioClip alarmSound = new AudioClip(getClass().getResource("/Resource/sound/timer_sound.wav").toString());
+    //private final AudioClip alarmSound = new AudioClip(getClass().getResource("/Resource/sound/timer_sound.wav").toString());
 
     public AlarmPane() {
         listView.setCellFactory(list -> new ListCell<>() {
@@ -158,7 +161,7 @@ public class AlarmPane extends BorderPane {
                     alert.setHeaderText(null);
                     alert.setContentText(alarm.getTitle() + " 時間到！");
                     alert.show();
-                    alarmSound.play();
+                    //alarmSound.play();
                 });
             }
         }
