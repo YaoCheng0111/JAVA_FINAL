@@ -16,16 +16,17 @@ public class HabitTrackerPane extends BorderPane {
     private final HabitManager habitManager;
     private final GridPane tableGrid;
     private final GridPane perfectRowGrid = new GridPane();
-
+    private UserData userData;
 
     // 這三個 Label 改成類別成員
     private Label checkRateLabel;
     private Label perfectDaysLabel;
     private Label totalCountLabel;
 
-    public HabitTrackerPane(HabitManager habitManager, WeeklyManager weeklyManager) {
+    public HabitTrackerPane(HabitManager habitManager, WeeklyManager weeklyManager,UserData userData) {
         this.habitManager = habitManager;
         this.tableGrid = new GridPane();
+        this.userData = userData;
 
         setPadding(new Insets(10));
 
@@ -175,9 +176,12 @@ public class HabitTrackerPane extends BorderPane {
                     if (habitManager.isChecked(r, c)) {
                         showAlert(habit.getName() + " 今天已經打卡過了！");
                     } else {
+                        userData.addTokens(10);
                         habitManager.toggleCheckIn(r, c);
                         habitManager.saveHabits();
                         refreshTable();
+                        if(habitManager.isPerfectClockIn(today)) userData.addTokens(20);
+                        if(habit.isWeeklyAttendence())userData.addTokens(20);
                         showAlert("打卡成功！");
                     }
                 });

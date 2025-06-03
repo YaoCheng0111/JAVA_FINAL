@@ -65,7 +65,7 @@ public class LobbyGUI extends Application {
         Pane imageLayer = new Pane(imageView, accessoryImageView);
         updateImage();
 
-        upButton = createDirectionButton("↑", e -> {
+        upButton = createDirectionButton("代幣商店", e -> {
             MainStage mainStage = new MainStage(userData, this);
             mainStage.show();
 
@@ -77,8 +77,16 @@ public class LobbyGUI extends Application {
             timerApp.start(newStage);
         });
         
-        leftButton = createDirectionButton("←",e->showAlert("你點擊了左方按鈕"));
-        rightButton = createDirectionButton("→",e->showAlert ("你點擊了右方按鈕"));
+        leftButton = createDirectionButton("關閉程式",e->{
+            System.exit(0);
+            });
+
+        rightButton = createDirectionButton("習慣追蹤器",e->{
+            HabitTrackerApp habitTrackerApp = new HabitTrackerApp();
+            Stage newStage = new Stage();
+            habitTrackerApp.start(newStage,userData);
+            });
+
         upButton.setPrefSize(200, 50);
         downButton.setPrefSize(200, 50);
         leftButton.setPrefSize(50, 200);

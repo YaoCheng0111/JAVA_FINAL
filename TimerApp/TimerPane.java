@@ -22,6 +22,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.AudioClip;
 import javafx.util.Duration;
 
 import java.io.IOException;
@@ -37,6 +38,7 @@ public class TimerPane extends BorderPane {
 
     private final ObservableList<TimerItem> timers = FXCollections.observableArrayList();
     private final ListView<Object> listView = new ListView<>();
+    private final AudioClip alarmSound = new AudioClip(getClass().getResource("/Resource/sound/timer_sound.wav").toString());
 
     public TimerPane() {
 
@@ -156,6 +158,7 @@ public class TimerPane extends BorderPane {
                                 alert.setHeaderText(null);
                                 alert.setContentText(currentTimer.getTitle() + " 時間到！");
                                 alert.show(); 
+                                alarmSound.play();
                         }
                     });
 

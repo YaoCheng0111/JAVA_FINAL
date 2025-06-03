@@ -27,6 +27,10 @@ public class StoreItem {
         return price;
     }
 
+    public String getImagePath(){
+        return imagePath;
+    }
+
     public Image getJavaFXImage() {
         return new Image(imagePath);
     }
