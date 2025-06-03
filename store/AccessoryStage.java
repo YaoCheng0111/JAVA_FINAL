@@ -30,7 +30,7 @@ public class AccessoryStage extends Stage {
         root.setCenter(accessoryPane);
 
         Scene scene = new Scene(root, 800, 600); //  **修正 Scene 設置**
-        scene.getStylesheets().add(getClass().getResource("css/storeStyle.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/css/storeStyle.css").toExternalForm());
         setScene(scene);
         show(); //  視窗顯示
     }
