@@ -48,8 +48,8 @@ public class LobbyGUI extends Application {
         userData = new UserData(100);
         tokenPane = new TokenPane(userData);
 
-        //馬永昌
-        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/Resource/images/yong-chang-Ma.jpg")));
+        //工作列icon
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/Resource/images/stand_cat.png")));
 
         // 主角貓咪圖片
         imageView = new ImageView(new Image("Resource/images/stand_cat.png"));
